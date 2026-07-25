@@ -1,0 +1,158 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+canvas {
+  display: block;
+}
+
+#crosshair {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  background: white;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 10;
+}
+
+#hud {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  pointer-events: none;
+  z-index: 10;
+  font-family: monospace;
+  color: white;
+}
+
+#health-bar-container {
+  position: relative;
+  width: 200px;
+  height: 24px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 2px solid white;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+#health-bar-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: #4caf50;
+  transition: width 0.15s ease-out, background-color 0.15s ease-out;
+}
+
+#health-text {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-size: 14px;
+  text-shadow: 1px 1px 2px black;
+}
+
+#ammo-counter {
+  font-size: 28px;
+  font-weight: bold;
+  text-shadow: 2px 2px 3px black;
+}
+
+#end-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  z-index: 20;
+  color: white;
+  font-family: monospace;
+}
+
+#end-screen.hidden {
+  display: none;
+}
+
+#end-message {
+  font-size: 48px;
+  margin: 0;
+}
+
+#restart-button {
+  font-size: 20px;
+  padding: 12px 32px;
+  cursor: pointer;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+}
+
+#restart-button:hover {
+  background: #45a049;
+}
+
+#round-score {
+  font-size: 24px;
+  font-weight: bold;
+  text-shadow: 2px 2px 3px black;
+}
+
+#connection-banner {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(200, 0, 0, 0.85);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 16px;
+  z-index: 15;
+  pointer-events: none;
+}
+
+#connection-banner.hidden {
+  display: none;
+}
+
+#countdown-display {
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 72px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 3px 3px 6px black;
+  z-index: 15;
+  font-family: monospace;
+  pointer-events: none;
+}
+
+#countdown-display.hidden {
+  display: none;
+}
