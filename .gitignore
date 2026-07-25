@@ -1,0 +1,15 @@
+.env
+
+node_modules/
+
+dist/
+build/
+
+*.pem
+*.key
+*.crt
+nginx/certs/
+
+# Logs & OS
+*.log
+.DS_Store
