@@ -2,7 +2,7 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-COPY PACKAGE*.json ./
+COPY package*.json ./
 
 RUN npm ci
 
@@ -15,7 +15,7 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=prod
 
-COPY package *.json ./
+COPY package*.json ./
 RUN npm ci --omit=dev
 #--omit=dev n'installe pas les Dependance pour le DEV ainsi on a que ce qu'il faut pour de la prod
 

@@ -9,6 +9,7 @@ build/
 *.key
 *.crt
 nginx/certs/
+/certs
 
 # Logs & OS
 *.log
