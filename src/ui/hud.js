@@ -1,3 +1,5 @@
+import { getReloadTimeRemaining } from '../game/ammo.js';
+
 const healthBarFill = document.getElementById('health-bar-fill');
 const healthText = document.getElementById('health-text');
 const ammoCounter = document.getElementById('ammo-counter');
@@ -12,7 +14,6 @@ export function updateHealthHUD(healthState) {
   healthBarFill.style.width = `${ratio * 100}%`;
   healthText.textContent = `${healthState.current} / ${healthState.max}`;
 
-
   if (ratio > 0.5) {
     healthBarFill.style.backgroundColor = '#4caf50';
   } else if (ratio > 0.25) {
@@ -21,8 +22,6 @@ export function updateHealthHUD(healthState) {
     healthBarFill.style.backgroundColor = '#f44336';
   }
 }
-
-import { getReloadTimeRemaining } from '../game/ammo.js';
 
 export function updateAmmoHUD(ammoState) {
   if (ammoState.reloading) {

@@ -115,9 +115,22 @@ canvas {
 }
 
 #round-score {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 6px 20px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: white;
+  font-family: monospace;
   font-size: 24px;
-  font-weight: bold;
-  text-shadow: 2px 2px 3px black;
+  z-index: 10;
+  pointer-events: none;
 }
 
 #connection-banner {
@@ -155,4 +168,14 @@ canvas {
 
 #countdown-display.hidden {
   display: none;
+}
+
+#health-bar-container {
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
+}
+
+#ammo-counter {
+  letter-spacing: 1px;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.3), 2px 2px 3px black;
 }

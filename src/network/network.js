@@ -64,9 +64,9 @@ export function connectToServer(callbacks) {
   return socket;
 }
 
-export function sendPosition(position, rotationY) {
+export function sendPosition(x, y, z, rotationY, isSliding) {
   if (!socket || !roomId) return;
-  socket.emit('player:move', { roomId, x: position.x, y: position.y, z: position.z, rotationY });
+  socket.emit('player:move', { roomId, x, y, z, rotationY, isSliding });
 }
 
 export function sendHit(damage) {
@@ -77,4 +77,9 @@ export function sendHit(damage) {
 export function sendReady() {
   if (!socket || !roomId) return;
   socket.emit('player:ready', { roomId });
+}
+
+export function sendShoot(isMoving) {
+  if (!socket || !roomId) return;
+  socket.emit('player:shoot', { roomId, isMoving });
 }

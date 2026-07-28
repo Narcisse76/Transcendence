@@ -6,6 +6,8 @@ const LANDING_DIP_AMOUNT = 0.3;
 const LANDING_RECOVERY_SPEED = 6;
 const LANDING_TRIGGER_THRESHOLD = 0.5;
 
+const LAND_BOB_AMOUNT = 0.08;
+
 export function createPhysicsState() {
   return {
     velocityY: 0,
@@ -45,4 +47,8 @@ export function applyGravity(camera, state, delta) {
 export function updateLandingDip(camera, state, delta) {
   state.landingDip = Math.max(0, state.landingDip - LANDING_RECOVERY_SPEED * delta);
   camera.position.y -= LANDING_DIP_AMOUNT * state.landingDip;
+}
+
+export function updateWeaponBob(weaponWrapper, baseY, state) {
+  weaponWrapper.position.y = baseY - LAND_BOB_AMOUNT * state.landingDip;
 }

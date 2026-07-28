@@ -7,6 +7,7 @@ export function setupGameNetworking(deps) {
     setMySpawnIndex,
     connectionBanner, applyDamage, updateHealthHUD,
     onEnemyWinsRound, startRoundCountdown, showEndScreen, resetMatch,
+    onOpponentShootAnimation, onOpponentPositionUpdate,
   } = deps;
 
   return connectToServer({
@@ -25,9 +26,10 @@ export function setupGameNetworking(deps) {
     onOpponentMove: (moveData) => {
       opponentTargetPosition.set(moveData.x, moveData.y, moveData.z);
       setOpponentTargetRotationY(moveData.rotationY);
+      if (onOpponentPositionUpdate) onOpponentPositionUpdate(moveData);
     },
-    onOpponentShoot: (shootData) => {
-      console.log('Adversaire tire:', shootData);
+    onOpponentShoot: (data) => {
+      if (onOpponentShootAnimation) onOpponentShootAnimation(data.isMoving);
     },
     onOpponentHit: (hitData) => {
       applyDamage(playerHealth, hitData.damage, () => {

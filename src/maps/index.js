@@ -11,12 +11,11 @@ export function loadMap(scene, mapName) {
   const floorMaterial = new THREE.MeshStandardMaterial({ color: 0x888888, side: THREE.DoubleSide });
   const floor = new THREE.Mesh(floorGeometry, floorMaterial);
   floor.rotation.x = Math.PI / 2;
-  floor.position.y = -1;
+  floor.position.y = 0;
   scene.add(floor);
 
 
   const wallMaterial = new THREE.MeshStandardMaterial({ color: 0xaa4444 });
-  const wallMeshes = [];
   const wallBoxes = [];
 
   for (const wallDef of mapData.walls) {
@@ -24,10 +23,8 @@ export function loadMap(scene, mapName) {
     const mesh = new THREE.Mesh(geometry, wallMaterial);
     mesh.position.set(...wallDef.position);
     scene.add(mesh);
-
-    wallMeshes.push(mesh);
     wallBoxes.push(new THREE.Box3().setFromObject(mesh));
   }
 
-  return { floor, wallMeshes, wallBoxes, spawns: mapData.spawns };
+  return { floor, wallBoxes, spawns: mapData.spawns };
 }
