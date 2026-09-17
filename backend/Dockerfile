@@ -21,6 +21,13 @@ RUN npm ci --omit=dev
 
 COPY --from=builder /app/dist ./dist
 
+# needed for vault.sh
+RUN apk add --no-cache curl jq
+
+COPY vault.sh /app/vault.sh
+RUN chmod +x /app/vault.sh
+
 EXPOSE 3000
 
+ENTRYPOINT ["/bin/sh", "/app/vault.sh"]
 CMD ["node", "dist/main.js"]
