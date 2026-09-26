@@ -66,7 +66,13 @@ export default function HomeScreen({
           title={languageText.rulesTitle}
           paragraphs={languageText.rulesParagraphs}
         />
-        <div className="mt-6">
+        <div className="mt-6 flex flex-col gap-3">
+          <Button
+            text={languageText.playButton}
+            onClick={() => {
+              // Le lancement du jeu sera branché ici plus tard.
+            }}
+          />
           <Button
             text={languageText.commandsTitle}
             onClick={() => setSelectedScreen('commands')}

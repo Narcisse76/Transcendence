@@ -3,6 +3,7 @@ export type Language = 'fr' | 'en' | 'es';
 
 export const translations = {
   fr: {
+    playButton: 'Jouer',
     commandsTitle: 'Commandes',
     backToMenu: 'Retour au menu',
     commands: [
@@ -33,6 +34,7 @@ export const translations = {
     ],
   },
   en: {
+    playButton: 'Play',
     commandsTitle: 'Controls',
     backToMenu: 'Back to menu',
     commands: [
@@ -63,6 +65,7 @@ export const translations = {
     ],
   },
   es: {
+    playButton: 'Jugar',
     commandsTitle: 'Controles',
     backToMenu: 'Volver al menú',
     commands: [
