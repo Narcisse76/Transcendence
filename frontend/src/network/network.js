@@ -16,7 +16,8 @@ export function connectToServer(callbacks) {
   const playerId = getPlayerId();
   const savedRoomId = sessionStorage.getItem('currentRoomId');
 
-  socket = io('http://localhost:3001', {
+  socket = io ({
+    transports: ['websocket'],
     auth: { playerId, roomId: savedRoomId || null },
   });
 

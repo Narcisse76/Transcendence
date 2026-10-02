@@ -23,7 +23,7 @@ vault-init: .env
 		JWT_SECRET="$(JWT_SECRET)"
 
 up: vault-init
-	$(COMPOSE) up -d --build db backend frontend proxy
+	$(COMPOSE) up -d --build db backend game frontend proxy
 
 down:
 	$(COMPOSE) down
