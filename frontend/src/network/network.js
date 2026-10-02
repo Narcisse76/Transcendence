@@ -3,7 +3,7 @@ import { io } from 'socket.io-client';
 let socket = null;
 let roomId = null;
 
-function getPlayerId() {
+export function getPlayerId() {
   let playerId = sessionStorage.getItem('playerId');
   if (!playerId) {
     playerId = 'player-' + Math.random().toString(36).substring(2, 15);
@@ -61,6 +61,9 @@ export function connectToServer(callbacks) {
     callbacks.onMatchAbandoned();
   });
 
+  socket.on('chat:message', (data) => callbacks.onChatMessage(data));
+  socket.on('chat:blocked', (data) => callbacks.onChatBlocked(data));
+
   return socket;
 }
 
@@ -82,4 +85,9 @@ export function sendReady() {
 export function sendShoot(isMoving) {
   if (!socket || !roomId) return;
   socket.emit('player:shoot', { roomId, isMoving });
+}
+
+export function sendChat(text) {
+  if (!socket || !roomId) return;
+  socket.emit('chat:send', { text });
 }

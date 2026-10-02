@@ -8,6 +8,7 @@ export function setupGameNetworking(deps) {
     connectionBanner, applyDamage, updateHealthHUD,
     onEnemyWinsRound, startRoundCountdown, showEndScreen, resetMatch,
     onOpponentShootAnimation, onOpponentPositionUpdate,
+    onChatMessage, onChatBlocked,
   } = deps;
 
   return connectToServer({
@@ -48,5 +49,7 @@ export function setupGameNetworking(deps) {
       connectionBanner.classList.add('hidden');
       showEndScreen('Adversaire non revenu - Partie terminee', resetMatch);
     },
+    onChatMessage,
+    onChatBlocked,
   });
 }

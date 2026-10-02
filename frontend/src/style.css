@@ -179,3 +179,72 @@ canvas {
   letter-spacing: 1px;
   text-shadow: 0 0 8px rgba(255, 255, 255, 0.3), 2px 2px 3px black;
 }
+
+#chat {
+  position: fixed;
+  left: 20px;
+  bottom: 60px;
+  width: 360px;
+  z-index: 12;
+  font-family: monospace;
+  font-size: 14px;
+  color: white;
+  pointer-events: none;
+}
+
+#chat-messages {
+  max-height: 180px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.chat-line {
+  padding: 2px 6px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 3px;
+  text-shadow: 1px 1px 2px black;
+  overflow-wrap: anywhere;
+  transition: opacity 0.5s;
+}
+
+.chat-line.faded {
+  opacity: 0;
+}
+
+#chat.open .chat-line.faded {
+  opacity: 1;
+}
+
+.chat-line.mine .chat-author {
+  color: #4caf50;
+}
+
+.chat-line.theirs .chat-author {
+  color: #f44336;
+}
+
+.chat-line.system {
+  color: #ff9800;
+  font-style: italic;
+}
+
+#chat-input {
+  display: none;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 6px;
+  padding: 6px 8px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  color: white;
+  font: inherit;
+  outline: none;
+  pointer-events: auto;
+}
+
+#chat.open #chat-input {
+  display: block;
+}
