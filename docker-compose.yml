@@ -55,6 +55,8 @@ services:
       dockerfile: Dockerfile
     container_name: ft_game
     restart: unless-stopped
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
     networks:
       - transcendence
 

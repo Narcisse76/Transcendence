@@ -126,7 +126,7 @@ io.on('connection', (socket) => {
     const now = Date.now();
     socket.data.chatTimestamps = socket.data.chatTimestamps.filter((t) => now - t < CHAT_RATE_WINDOW);
     if (socket.data.chatTimestamps.length >= CHAT_RATE_LIMIT) {
-      socket.emit('chat:blocked', { reason: 'Trop de messages' });
+      socket.emit('chat:blocked', { reason: 'Too many messages' });
       return
     }
     
@@ -136,8 +136,8 @@ io.on('connection', (socket) => {
     try {
       verdict = await moderateMessage(text, {playerId: socket.data.playerId, roomId });
     } catch (err) {
-      console.error('Erreur moderation:', err);
-      verdict = { allowed: false, reason: `Moderation indisponible` };
+      console.error('Moderation error:', err);
+      verdict = { allowed: false, reason: `Moderation unavailable` };
     }
 
     if (!verdict.allowed) {
