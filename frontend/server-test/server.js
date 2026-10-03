@@ -1,11 +1,6 @@
 import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import { moderateMessage } from './moderation.js';
-
-const CHAT_MAX_LENGTH = 200;
-const CHAT_RATE_LIMIT = 5;
-const CHAT_RATE_WINDOW = 5000;  
 
 const app = express();
 const httpServer = createServer(app);
@@ -22,7 +17,6 @@ const roundReadyTimers = new Map();
 
 io.on('connection', (socket) => {
   const { playerId, roomId: rejoinRoomId } = socket.handshake.auth;
-  socket.data.chatTimestamps = [];
 
   console.log(`Connexion : ${socket.id} (playerId: ${playerId})`);
 
@@ -114,43 +108,6 @@ io.on('connection', (socket) => {
   socket.on('player:hit', (data) => {
     socket.to(data.roomId).emit('hit:received', { damage: data.damage });
   });
-
-  socket.on('chat:send', async(data) => {
-    const roomId = socket.data.roomId;
-    if (!roomId || !rooms.has(roomId)) return;
-    if (typeof data?.text !== 'string') return;
-
-    const text = data.text.trim().slice(0, CHAT_MAX_LENGTH);
-    if (!text) return;
-
-    const now = Date.now();
-    socket.data.chatTimestamps = socket.data.chatTimestamps.filter((t) => now - t < CHAT_RATE_WINDOW);
-    if (socket.data.chatTimestamps.length >= CHAT_RATE_LIMIT) {
-      socket.emit('chat:blocked', { reason: 'Trop de messages' });
-      return
-    }
-    
-    socket.data.chatTimestamps.push(now);
-    
-    let verdict;
-    try {
-      verdict = await moderateMessage(text, {playerId: socket.data.playerId, roomId });
-    } catch (err) {
-      console.error('Erreur moderation:', err);
-      verdict = { allowed: false, reason: `Moderation indisponible` };
-    }
-
-    if (!verdict.allowed) {
-      socket.emit('chat:blocked', { reason: verdict.reason });
-      return;
-    }
-
-    io.to(roomId).emit('chat:message', {
-      from: socket.data.playerId,
-      text: verdict.text ?? text,
-      timestamp: now
-    })
-  })
 
   socket.on('disconnect', () => {
     console.log(`Deconnecte : ${socket.id} (playerId: ${socket.data.playerId})`);

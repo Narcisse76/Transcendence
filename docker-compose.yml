@@ -1,0 +1,90 @@
+services:
+  db:
+    image: docker.io/postgres:16-alpine
+    container_name: ft_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - transcendence
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ft_backend
+    restart: unless-stopped
+    entrypoint: ["/bin/sh", "/app/vault.sh"]
+    command: ["npm", "start"]
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: 3000
+      VAULT_ADDR: "http://vault:8200"
+      VAULT_TOKEN: "root"
+    depends_on:
+      vault:
+        condition: service_started
+      db:
+        condition: service_healthy
+    networks:
+      - transcendence
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ft_frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    networks:
+      - transcendence
+
+  game:
+    build:
+      context: ./server-test
+      dockerfile: Dockerfile
+    container_name: ft_game
+    restart: unless-stopped
+    networks:
+      - transcendence
+
+  proxy:
+    build: ./proxy
+    container_name: proxy_waf
+    ports:
+      - "8443:443"
+      - "8080:80"
+    depends_on:
+      - frontend
+      - backend
+      - game
+    networks:
+      - transcendence
+
+  vault:
+    image: docker.io/hashicorp/vault:2.1
+    container_name: vault
+    restart: unless-stopped
+    command: server -dev -dev-listen-address=0.0.0.0:8200 -dev-root-token-id=root
+    environment:
+      VAULT_ADDR: "http://127.0.0.1:8200"
+    networks:
+      - transcendence
+
+networks:
+  transcendence:
+    driver: bridge
+
+volumes:
+  db_data:
+  vault_data:
