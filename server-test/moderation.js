@@ -1,17 +1,24 @@
-const BANNED_WORDS = ['connard', 'encule', 'salope', 'fdp', 'ntm'];
+import OpenAIClient from 'openai';
 
-function normalize(text) {
-  return text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-}
+const openai = new OpenAIClient
+(
+	{
+		apiKey: process.env.OPENAI_API_KEY,
+		timeout: 3000,
+	}
+);
 
-export async function moderateMessage(text, context) {
-  const normalized = normalize(text);
-
-  for (const word of BANNED_WORDS) {
-    if (new RegExp(`\\b${word}\\b`).test(normalized)) {
-      return { allowed: false, reason: 'Langage inapproprie' };
-    }
-  }
-
-  return { allowed: true };
+export async function moderateMessage(text, context) 
+{
+	const moderation = await openai.moderations.create
+	(
+		{
+			model: "omni-moderation-latest",
+			input: text,
+		}
+	);
+	const result = moderation.results[0];
+	if (result.flagged == true) 
+		return { allowed: false, reason: "Inappropriate language" };
+	return { allowed: true };
 }
