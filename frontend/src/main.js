@@ -146,9 +146,9 @@ setupGameNetworking({
   onOpponentPositionUpdate: (moveData) => opponentController.onPositionUpdate(moveData),
   onChatMessage: (msg) => {
     const isMine = msg.from === getPlayerId();
-    chat.addMessage(isMine ? 'Toi' : 'Adversaire', msg.text, isMine);
+    chat.addMessage(isMine ? 'You' : 'Opponent', msg.text, isMine);
   },
-  onChatBlocked: (data) => chat.addSystemMessage(`Message bloque : ${data.reason}`),
+  onChatBlocked: (data) => chat.addSystemMessage(`Blocked message: ${data.reason}`),
 });
 
 // Tir

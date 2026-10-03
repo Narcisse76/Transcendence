@@ -18,7 +18,10 @@ export async function moderateMessage(text, context)
 		}
 	);
 	const result = moderation.results[0];
+	/*DEBUG*/
+	 console.log("MODERATION:", JSON.stringify(result, null, 2));
+	 /*-----*/
 	if (result.flagged == true) 
-		return { allowed: false, reason: "Inappropriate language" };
+		return { allowed: false, reason: "inappropriate language" };
 	return { allowed: true };
 }

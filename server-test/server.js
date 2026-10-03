@@ -126,7 +126,7 @@ io.on('connection', (socket) => {
     const now = Date.now();
     socket.data.chatTimestamps = socket.data.chatTimestamps.filter((t) => now - t < CHAT_RATE_WINDOW);
     if (socket.data.chatTimestamps.length >= CHAT_RATE_LIMIT) {
-      socket.emit('chat:blocked', { reason: 'Too many messages' });
+      socket.emit('chat:blocked', { reason: 'too many messages' });
       return
     }
     
