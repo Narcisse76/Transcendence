@@ -13,13 +13,15 @@ import { createRecoilState, triggerRecoil, updateRecoil } from './game/recoil.js
 import { showEndScreen } from './ui/endscreen.js';
 import { createMovementState, setupSlide, setupSprint, updateMovement, updateSlideCameraOffset, removeSlideCameraOffset } from './game/movement.js';
 import { createRoundState, recordPlayerWin, recordEnemyWin, resetRounds } from './ui/rounds.js';
-import { sendPosition, sendHit, sendReady, sendShoot } from './network/network.js';
 import { setupGameNetworking } from './network/gamenetwork.js';
 import { createCountdownState, startCountdown, updateCountdown } from './game/roundcountdown.js';
 import { createMatchFlow } from './game/matchflow.js';
 import { loadWeaponModel } from './game/weaponmodel.js';
 import { loadCharacterModel } from './game/charactermodel.js';
 import { createOpponentController } from './game/opponentcontroller.js';
+import { sendPosition, sendHit, sendReady, sendShoot, sendChat, getPlayerId } from './network/network.js';
+import { setupChat } from './ui/chat.js';
+
 
 import './style.css'
 
@@ -142,11 +144,16 @@ setupGameNetworking({
   onEnemyWinsRound, startRoundCountdown, showEndScreen, resetMatch,
   onOpponentShootAnimation: (isMoving) => opponentController.onShoot(isMoving),
   onOpponentPositionUpdate: (moveData) => opponentController.onPositionUpdate(moveData),
+  onChatMessage: (msg) => {
+    const isMine = msg.from === getPlayerId();
+    chat.addMessage(isMine ? 'You' : 'Opponent', msg.text, isMine);
+  },
+  onChatBlocked: (data) => chat.addSystemMessage(`Blocked message: ${data.reason}`),
 });
 
 // Tir
 setupShooting(camera, scene, muzzlePoint, [opponentMesh, floor], {
-  canFire: () => roundActive && !countdownState.active && canFire(ammoState),
+  canFire: () => roundActive && !countdownState.active && !chat.isOpen() && canFire(ammoState),
   onFire: () => {
     fire(ammoState);
     triggerRecoil(recoilState);
@@ -171,6 +178,14 @@ setupSprint(movementState);
 setupJump(physicsState, () => {
   movementState.sliding = false;
   movementState.slideSpeed = 0;
+});
+
+const chat = setupChat({
+  onSend: sendChat,
+  onOpen: () => {
+    move.forward = move.backward = move.left = move.right = false;
+    movementState.sprinting = false;
+  },
 });
 
 // Boucle principale

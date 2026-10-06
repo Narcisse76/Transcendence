@@ -140,4 +140,3 @@ io.on('connection', (socket) => {
 
 httpServer.listen(3001, () => {
   console.log('Serveur WebSocket sur le port 3001');
-});

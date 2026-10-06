@@ -49,6 +49,17 @@ services:
     networks:
       - transcendence
 
+  game:
+    build:
+      context: ./server-test
+      dockerfile: Dockerfile
+    container_name: ft_game
+    restart: unless-stopped
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+    networks:
+      - transcendence
+
   proxy:
     build: ./proxy
     container_name: proxy_waf
@@ -58,6 +69,7 @@ services:
     depends_on:
       - frontend
       - backend
+      - game
     networks:
       - transcendence
 
