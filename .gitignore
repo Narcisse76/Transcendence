@@ -1,5 +1,22 @@
+# Environment & Secrets
+.env
+*.local
+*.pem
+*.key
+*.crt
+nginx/certs/
+/certs
+
+# Dependencies
+node_modules/
+
+# Production builds
+dist/
+dist-ssr/
+build/
+
 # Logs
-logs
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -7,16 +24,11 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
+# Editor & OS files
+.DS_Store
 .vscode/*
 !.vscode/extensions.json
-.idea
-.DS_Store
+.idea/
 *.suo
 *.ntvs*
 *.njsproj
