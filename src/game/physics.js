@@ -1,5 +1,5 @@
 const GRAVITY = -20;
-const JUMP_STRENGTH = 8;
+const JUMP_STRENGTH = 6;
 const FLOOR_Y = 0.7;
 
 const LANDING_DIP_AMOUNT = 0.3;
