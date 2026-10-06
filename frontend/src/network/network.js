@@ -3,6 +3,10 @@ import { io } from 'socket.io-client';
 let socket = null;
 let roomId = null;
 
+// En dev : connexion directe au serveur de jeu.
+// Derriere le proxy : undefined = meme origine que la page (le proxy route /socket.io/).
+const SERVER_URL = import.meta.env.DEV ? 'http://localhost:3001' : undefined;
+
 function getPlayerId() {
   let playerId = sessionStorage.getItem('playerId');
   if (!playerId) {
@@ -16,7 +20,7 @@ export function connectToServer(callbacks) {
   const playerId = getPlayerId();
   const savedRoomId = sessionStorage.getItem('currentRoomId');
 
-  socket = io('http://localhost:3001', {
+  socket = io(SERVER_URL, {
     auth: { playerId, roomId: savedRoomId || null },
   });
 

@@ -23,6 +23,9 @@ import { createOpponentController } from './game/opponentcontroller.js';
 
 import './style.css'
 
+// Prefixe des assets : "/" en dev, "/game/" une fois servi derriere le proxy
+const BASE = import.meta.env.BASE_URL;
+
 // Setup de base
 const scene = createScene();
 const weaponScene = new THREE.Scene();
@@ -57,7 +60,7 @@ weaponWrapper.add(muzzlePoint);
 
 const WEAPON_SCALE_FACTOR = 0.7 / 3.10;
 
-loadWeaponModel(camera, '/models/AssaultRifle_1.glb', (weaponModel) => {
+loadWeaponModel(camera, `${BASE}models/AssaultRifle_1.glb`, (weaponModel) => {
   weaponModel.rotation.y = Math.PI / 2;
 
   const box = new THREE.Box3().setFromObject(weaponModel);
@@ -85,7 +88,7 @@ scene.add(opponentMesh);
 
 const opponentController = createOpponentController(opponentMesh);
 
-loadCharacterModel('/models/opponent.glb', (model, mixer, actions) => {
+loadCharacterModel(`${BASE}models/opponent.glb`, (model, mixer, actions) => {
   model.traverse((child) => {
     if (child.isMesh) {
       child.frustumCulled = false;
