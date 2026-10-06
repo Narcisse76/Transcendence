@@ -1,12 +1,17 @@
-FROM node:20-alpine AS build
-
+FROM node:22-alpine AS build-game
 WORKDIR /app
-
 COPY package*.json ./
 RUN npm ci
+COPY index.html ./
+COPY public ./public
+COPY src ./src
+RUN npm run build -- --base=/game/
 
-COPY . .
-
+FROM node:22-alpine AS build-menu
+WORKDIR /app
+COPY menu/package*.json ./
+RUN npm ci
+COPY menu/ ./
 RUN npm run build
 
 FROM nginx:1.27-alpine AS runner
@@ -20,7 +25,8 @@ RUN apk add --no-cache openssl && \
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build-menu /app/dist /usr/share/nginx/html
+COPY --from=build-game /app/dist /usr/share/nginx/html/game
 
 EXPOSE 80 443
 

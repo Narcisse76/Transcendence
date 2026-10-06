@@ -20,9 +20,10 @@ export function connectToServer(callbacks) {
   const playerId = getPlayerId();
   const savedRoomId = sessionStorage.getItem('currentRoomId');
 
-  socket = io(SERVER_URL, {
-    auth: { playerId, roomId: savedRoomId || null },
-  });
+socket = io(SERVER_URL, {
+  transports: ['websocket'],
+  auth: { playerId, roomId: savedRoomId || null },
+});
 
   socket.on('round:start', () => {
     callbacks.onRoundStart();
