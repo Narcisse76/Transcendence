@@ -96,6 +96,16 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    volumes:
+      - grafana-data:/var/lib/grafana
+
   node-exporter:
     image: prom/node-exporter:latest
     container_name: node-exporter
@@ -108,4 +118,5 @@ networks:
 
 volumes:
   db_data:
+  grafana-data:
   vault_data:
