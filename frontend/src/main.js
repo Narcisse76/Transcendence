@@ -22,9 +22,6 @@ import { createOpponentController } from './game/opponentcontroller.js';
 import { sendPosition, sendHit, sendReady, sendShoot, sendChat, getPlayerId } from './network/network.js';
 import { setupChat } from './ui/chat.js';
 
-
-import './style.css'
-
 // Setup de base
 const scene = createScene();
 const weaponScene = new THREE.Scene();
@@ -148,7 +145,7 @@ setupGameNetworking({
     const isMine = msg.from === getPlayerId();
     chat.addMessage(isMine ? 'You' : 'Opponent', msg.text, isMine);
   },
-  onChatBlocked: (data) => chat.addSystemMessage(`Blocked message: ${data.reason}`),
+  onChatBlocked: (data) => chat.addSystemMessage(`Message bloque : ${data.reason}`),
 });
 
 // Tir

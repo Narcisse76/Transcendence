@@ -2,6 +2,7 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import { moderateMessage } from './moderation.js';
+import client from 'prom-client';
 
 const CHAT_MAX_LENGTH = 200;
 const CHAT_RATE_LIMIT = 5;
@@ -11,6 +12,53 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: { origin: '*' }
+});
+
+const register = new client.Registry();
+client.collectDefaultMetrics({
+  register,
+});
+
+const connectedPlayers = new client.Gauge({
+  name: 'game_connected_players',
+  help: 'Number of currently connected players',
+  registers: [register],
+});
+
+const activeRooms = new client.Gauge({
+  name: 'game_active_rooms',
+  help: 'Number of active game rooms',
+  registers: [register],
+});
+
+const waitingPlayers = new client.Gauge({
+  name: 'game_waiting_players',
+  help: 'Number of players waiting for a match',
+  registers: [register],
+});
+
+const playerMoves = new client.Counter({
+  name: 'game_player_moves_total',
+  help: 'Total number of player movement events',
+  registers: [register],
+});
+
+const playerShots = new client.Counter({
+  name: 'game_player_shots_total',
+  help: 'Total number of player shots',
+  registers: [register],
+});
+
+const playerHits = new client.Counter({
+  name: 'game_player_hits_total',
+  help: 'Total number of player hit events',
+  registers: [register],
+});
+
+app.get('/metrics', async (req, res) => 
+{
+  res.set('Content-Type', register.contentType);
+  res.end(await register.metrics());
 });
 
 let waitingPlayer = null;
