@@ -93,6 +93,8 @@ services:
     volumes:
       - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - ./monitoring/prometheus/rules:/etc/prometheus/rules:ro
+    networks:
+      - transcendence
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
@@ -111,12 +113,16 @@ services:
     - grafana-data:/var/lib/grafana
     - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
     - ./monitoring/grafana/provisioning/dashboards:/var/lib/grafana/dashboards:ro
+    networks:
+      - transcendence
 
   node-exporter:
     image: prom/node-exporter:latest
     container_name: node-exporter
     ports:
       - "9100:9100"
+    networks:
+      - transcendence
 
 networks:
   transcendence:

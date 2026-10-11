@@ -12,3 +12,4 @@ RUN mkdir -p /etc/ssl/certs /etc/ssl/private && \
 
 COPY ./conf.d/default.conf /etc/nginx/templates/conf.d/default.conf.template
 COPY ./modsec/custom-rules.conf /etc/modsecurity.d/owasp-crs/rules/custom-rules.conf
+
