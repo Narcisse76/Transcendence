@@ -13,17 +13,18 @@ import { createRecoilState, triggerRecoil, updateRecoil } from './game/recoil.js
 import { showEndScreen } from './ui/endscreen.js';
 import { createMovementState, setupSlide, setupSprint, updateMovement, updateSlideCameraOffset, removeSlideCameraOffset } from './game/movement.js';
 import { createRoundState, recordPlayerWin, recordEnemyWin, resetRounds } from './ui/rounds.js';
+import { sendPosition, sendHit, sendReady, sendShoot } from './network/network.js';
 import { setupGameNetworking } from './network/gamenetwork.js';
 import { createCountdownState, startCountdown, updateCountdown } from './game/roundcountdown.js';
 import { createMatchFlow } from './game/matchflow.js';
 import { loadWeaponModel } from './game/weaponmodel.js';
 import { loadCharacterModel } from './game/charactermodel.js';
 import { createOpponentController } from './game/opponentcontroller.js';
-import { sendPosition, sendHit, sendReady, sendShoot, sendChat, getPlayerId } from './network/network.js';
-import { setupChat } from './ui/chat.js';
-
 
 import './style.css'
+
+// Prefixe des assets : "/" en dev, "/game/" une fois servi derriere le proxy
+const BASE = import.meta.env.BASE_URL;
 
 // Setup de base
 const scene = createScene();
@@ -59,7 +60,7 @@ weaponWrapper.add(muzzlePoint);
 
 const WEAPON_SCALE_FACTOR = 0.7 / 3.10;
 
-loadWeaponModel(camera, '/models/AssaultRifle_1.glb', (weaponModel) => {
+loadWeaponModel(camera, `${BASE}models/AssaultRifle_1.glb`, (weaponModel) => {
   weaponModel.rotation.y = Math.PI / 2;
 
   const box = new THREE.Box3().setFromObject(weaponModel);
@@ -87,7 +88,7 @@ scene.add(opponentMesh);
 
 const opponentController = createOpponentController(opponentMesh);
 
-loadCharacterModel('/models/opponent.glb', (model, mixer, actions) => {
+loadCharacterModel(`${BASE}models/opponent.glb`, (model, mixer, actions) => {
   model.traverse((child) => {
     if (child.isMesh) {
       child.frustumCulled = false;
@@ -144,16 +145,11 @@ setupGameNetworking({
   onEnemyWinsRound, startRoundCountdown, showEndScreen, resetMatch,
   onOpponentShootAnimation: (isMoving) => opponentController.onShoot(isMoving),
   onOpponentPositionUpdate: (moveData) => opponentController.onPositionUpdate(moveData),
-  onChatMessage: (msg) => {
-    const isMine = msg.from === getPlayerId();
-    chat.addMessage(isMine ? 'You' : 'Opponent', msg.text, isMine);
-  },
-  onChatBlocked: (data) => chat.addSystemMessage(`Blocked message: ${data.reason}`),
 });
 
 // Tir
 setupShooting(camera, scene, muzzlePoint, [opponentMesh, floor], {
-  canFire: () => roundActive && !countdownState.active && !chat.isOpen() && canFire(ammoState),
+  canFire: () => roundActive && !countdownState.active && canFire(ammoState),
   onFire: () => {
     fire(ammoState);
     triggerRecoil(recoilState);
@@ -178,14 +174,6 @@ setupSprint(movementState);
 setupJump(physicsState, () => {
   movementState.sliding = false;
   movementState.slideSpeed = 0;
-});
-
-const chat = setupChat({
-  onSend: sendChat,
-  onOpen: () => {
-    move.forward = move.backward = move.left = move.right = false;
-    movementState.sprinting = false;
-  },
 });
 
 // Boucle principale

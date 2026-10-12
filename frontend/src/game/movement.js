@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 
-const WALK_SPEED = 5;
-const SPRINT_SPEED = 9;
-const SLIDE_INITIAL_SPEED = 16;
+const WALK_SPEED = 2.5;
+const SPRINT_SPEED = 5;
+const SLIDE_INITIAL_SPEED = 10;
 const SLIDE_FRICTION = 10;
 const SLIDE_CAMERA_DIP = 0.4;
 const SLIDE_CAMERA_DIP_SPEED = 10;
