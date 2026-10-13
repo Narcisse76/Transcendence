@@ -17,7 +17,7 @@ vault-init: .env
 	./vault/vault-init.sh
 
 up: vault-init
-	$(COMPOSE) up -d --build db backend game frontend proxy
+	$(COMPOSE) up -d --build db backend game frontend proxy prometheus grafana node-exporter
 
 down:
 	$(COMPOSE) down

@@ -1,0 +1,35 @@
+groups:
+  - name: transcendence-alerts
+    rules:
+      - alert: GameServerDown
+        expr: up{job="game-server"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Game server is down"
+          description: "The Transcendence game server has been unreachable for more than 30 seconds."
+      - alert: HighMemoryUsage
+        expr: 100 * (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) > 90
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage"
+          description: "Memory usage is above 90% for more than 2 minutes."
+      - alert: HighCPUUsage
+        expr: 100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 90
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage"
+          description: "CPU usage is above 90% for more than 2 minutes."
+      - alert: TooManyPlayers
+        expr: game_connected_players > 0
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High number of connected players"
+          description: "More than 20 players are connected."
