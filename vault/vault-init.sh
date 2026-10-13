@@ -20,6 +20,8 @@ fi
 : "${POSTGRES_DB:?POSTGRES_DB is required}"
 : "${JWT_SECRET:?JWT_SECRET is required}"
 : "${OPENAI_API_KEY:?OPENAI_API_KEY is required}"
+: "${GRAFANA_ADMIN_USER:?GRAFANA_ADMIN_USER is required}"
+: "${GRAFANA_ADMIN_PASSWORD:?GRAFANA_ADMIN_PASSWORD is required}"
 
 # VAULT_CONTAINER is vault if not defined, VAULT_TOKEN root if not defined
 VAULT_CONTAINER="${VAULT_CONTAINER:-vault}"
@@ -47,6 +49,8 @@ docker exec -e VAULT_TOKEN="$VAULT_TOKEN" "$VAULT_CONTAINER" \
     vault kv put secret/transcendence/backend \
     "DATABASE_URL=$DATABASE_URL" \
     "JWT_SECRET=$JWT_SECRET" \
-	"OPENAI_API_KEY=$OPENAI_API_KEY"
+	"OPENAI_API_KEY=$OPENAI_API_KEY" \
+    "GRAFANA_ADMIN_USER=$GRAFANA_ADMIN_USER" \
+    "GRAFANA_ADMIN_PASSWORD=$GRAFANA_ADMIN_PASSWORD"
 
 echo "Vault secrets initialized."
