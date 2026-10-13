@@ -7,7 +7,8 @@ let roomId = null;
 // Derriere le proxy : undefined = meme origine que la page (le proxy route /socket.io/).
 const SERVER_URL = import.meta.env.DEV ? 'http://localhost:3001' : undefined;
 
-function getPlayerId() {
+// dagouill : added export based on AI-moderation branch
+export function getPlayerId() {
   let playerId = sessionStorage.getItem('playerId');
   if (!playerId) {
     playerId = 'player-' + Math.random().toString(36).substring(2, 15);
@@ -66,6 +67,11 @@ socket = io(SERVER_URL, {
     callbacks.onMatchAbandoned();
   });
 
+// dagouill : added from AI-moderation branch
+  socket.on('chat:message', (data) => callbacks.onChatMessage(data));
+  socket.on('chat:blocked', (data) => callbacks.onChatBlocked(data));
+// ---
+
   return socket;
 }
 
@@ -87,4 +93,10 @@ export function sendReady() {
 export function sendShoot(isMoving) {
   if (!socket || !roomId) return;
   socket.emit('player:shoot', { roomId, isMoving });
+}
+
+// dagouill : added from AI-moderation branch
+export function sendChat(text) {
+  if (!socket || !roomId) return;
+  socket.emit('chat:send', { text });
 }
