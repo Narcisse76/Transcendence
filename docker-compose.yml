@@ -54,6 +54,8 @@ services:
       context: ./server-test
       dockerfile: Dockerfile
     container_name: ft_game
+    ports:
+      - 3001:3001
     restart: unless-stopped
     environment:
       OPENAI_API_KEY: ${OPENAI_API_KEY}
@@ -83,6 +85,46 @@ services:
     networks:
       - transcendence
 
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/prometheus/rules:/etc/prometheus/rules:ro
+    networks:
+      - transcendence
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  grafana:
+    build:
+      context: ./monitoring/grafana
+      dockerfile: Dockerfile
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+      - vault
+    environment:
+      VAULT_ADDR: "http://vault:8200"
+      VAULT_TOKEN: "root"
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+    - grafana-data:/var/lib/grafana
+    - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+    - ./monitoring/grafana/provisioning/dashboards:/var/lib/grafana/dashboards:ro
+    networks:
+      - transcendence
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    networks:
+      - transcendence
+
 networks:
   transcendence:
     driver: bridge
@@ -90,3 +132,4 @@ networks:
 volumes:
   db_data:
   vault_data:
+  grafana-data:

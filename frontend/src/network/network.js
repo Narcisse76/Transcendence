@@ -3,6 +3,11 @@ import { io } from 'socket.io-client';
 let socket = null;
 let roomId = null;
 
+// En dev : connexion directe au serveur de jeu.
+// Derriere le proxy : undefined = meme origine que la page (le proxy route /socket.io/).
+const SERVER_URL = import.meta.env.DEV ? 'http://localhost:3001' : undefined;
+
+// dagouill : added export based on AI-moderation branch
 export function getPlayerId() {
   let playerId = sessionStorage.getItem('playerId');
   if (!playerId) {
@@ -16,10 +21,10 @@ export function connectToServer(callbacks) {
   const playerId = getPlayerId();
   const savedRoomId = sessionStorage.getItem('currentRoomId');
 
-  socket = io ({
-    transports: ['websocket'],
-    auth: { playerId, roomId: savedRoomId || null },
-  });
+socket = io(SERVER_URL, {
+  transports: ['websocket'],
+  auth: { playerId, roomId: savedRoomId || null },
+});
 
   socket.on('round:start', () => {
     callbacks.onRoundStart();
@@ -62,8 +67,10 @@ export function connectToServer(callbacks) {
     callbacks.onMatchAbandoned();
   });
 
+// dagouill : added from AI-moderation branch
   socket.on('chat:message', (data) => callbacks.onChatMessage(data));
   socket.on('chat:blocked', (data) => callbacks.onChatBlocked(data));
+// ---
 
   return socket;
 }
@@ -88,6 +95,7 @@ export function sendShoot(isMoving) {
   socket.emit('player:shoot', { roomId, isMoving });
 }
 
+// dagouill : added from AI-moderation branch
 export function sendChat(text) {
   if (!socket || !roomId) return;
   socket.emit('chat:send', { text });

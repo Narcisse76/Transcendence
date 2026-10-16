@@ -6,6 +6,9 @@ import Button from './components/Button';
 import { translations } from './translations';
 import type { Language } from './translations';
 
+// En dev : le jeu tourne sur son propre port. Derriere le proxy : il est servi sur /game/.
+const GAME_URL = import.meta.env.DEV ? 'http://localhost:5173/' : '/game/';
+
 type HomeScreenProps = {
   pseudo: string;
   setPseudo: (value: string) => void;
@@ -70,7 +73,12 @@ export default function HomeScreen({
           <Button
             text={languageText.playButton}
             onClick={() => {
-              // Le lancement du jeu sera branché ici plus tard.
+              const params = new URLSearchParams({
+                name: pseudo,
+                avatar: selectedAvatar,
+                lang: selectedLanguage,
+              });
+              window.location.href = `${GAME_URL}?${params.toString()}`;
             }}
           />
           <Button

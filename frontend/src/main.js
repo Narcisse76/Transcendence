@@ -19,11 +19,14 @@ import { createMatchFlow } from './game/matchflow.js';
 import { loadWeaponModel } from './game/weaponmodel.js';
 import { loadCharacterModel } from './game/charactermodel.js';
 import { createOpponentController } from './game/opponentcontroller.js';
+// dagouill : those two lines added from IA-moderation branch
 import { sendPosition, sendHit, sendReady, sendShoot, sendChat, getPlayerId } from './network/network.js';
 import { setupChat } from './ui/chat.js';
-
-
+// ---
 import './style.css'
+
+// Prefixe des assets : "/" en dev, "/game/" une fois servi derriere le proxy
+const BASE = import.meta.env.BASE_URL;
 
 // Setup de base
 const scene = createScene();
@@ -59,7 +62,7 @@ weaponWrapper.add(muzzlePoint);
 
 const WEAPON_SCALE_FACTOR = 0.7 / 3.10;
 
-loadWeaponModel(camera, '/models/AssaultRifle_1.glb', (weaponModel) => {
+loadWeaponModel(camera, `${BASE}models/AssaultRifle_1.glb`, (weaponModel) => {
   weaponModel.rotation.y = Math.PI / 2;
 
   const box = new THREE.Box3().setFromObject(weaponModel);
@@ -87,7 +90,7 @@ scene.add(opponentMesh);
 
 const opponentController = createOpponentController(opponentMesh);
 
-loadCharacterModel('/models/opponent.glb', (model, mixer, actions) => {
+loadCharacterModel(`${BASE}models/opponent.glb`, (model, mixer, actions) => {
   model.traverse((child) => {
     if (child.isMesh) {
       child.frustumCulled = false;
@@ -144,16 +147,19 @@ setupGameNetworking({
   onEnemyWinsRound, startRoundCountdown, showEndScreen, resetMatch,
   onOpponentShootAnimation: (isMoving) => opponentController.onShoot(isMoving),
   onOpponentPositionUpdate: (moveData) => opponentController.onPositionUpdate(moveData),
+// dagouill : those 5 lines added from IA-moderation branch
   onChatMessage: (msg) => {
     const isMine = msg.from === getPlayerId();
     chat.addMessage(isMine ? 'You' : 'Opponent', msg.text, isMine);
   },
   onChatBlocked: (data) => chat.addSystemMessage(`Blocked message: ${data.reason}`),
+// ---
 });
 
 // Tir
 setupShooting(camera, scene, muzzlePoint, [opponentMesh, floor], {
-  canFire: () => roundActive && !countdownState.active && !chat.isOpen() && canFire(ammoState),
+// dagouill : this line changed based on IA-moderation branch
+canFire: () => roundActive && !countdownState.active && !chat.isOpen() && canFire(ammoState),
   onFire: () => {
     fire(ammoState);
     triggerRecoil(recoilState);
@@ -180,6 +186,7 @@ setupJump(physicsState, () => {
   movementState.slideSpeed = 0;
 });
 
+// dagouill : added from IA-moderation branch
 const chat = setupChat({
   onSend: sendChat,
   onOpen: () => {
@@ -187,6 +194,7 @@ const chat = setupChat({
     movementState.sprinting = false;
   },
 });
+// ---
 
 // Boucle principale
 let lastPositionSent = 0;
