@@ -67,7 +67,6 @@ io.on('connection', (socket) => {
       waitingPlayer = null;
     } else {
       waitingPlayer = { playerId, socket };
-	  waitingPlayers.set(1);
       socket.emit('waiting');
     }
   }
