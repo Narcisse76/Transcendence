@@ -19,20 +19,18 @@ export default function App() {
   const [selectedScreen, setSelectedScreen] = useState('home');
 
   useEffect(() => {
-    let cancelled = false;
     async function loadUser() {
       try {
         const response = await fetch('/api/account/me');
         if (response.ok) {
           const connectedUser: User = await response.json();
-          if (!cancelled) setUser(connectedUser);
+          setUser(connectedUser);
         }
       } finally {
-        if (!cancelled) setLoading(false);
+        setLoading(false);
       }
     }
     loadUser().catch(() => {});
-    return () => { cancelled = true; };
   }, []);
 
   if (loading) return <p>Chargement...</p>;
