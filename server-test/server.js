@@ -55,6 +55,9 @@ const playerHits = new prometheus_client.Counter({
 });
 
 let waitingPlayer = null;
+connectedPlayers.set(0);
+activeRooms.set(0);
+waitingPlayers.set(0);
 const rooms = new Map();
 const DISCONNECT_GRACE_PERIOD = 20000;
 const disconnectTimers = new Map();

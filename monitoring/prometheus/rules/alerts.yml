@@ -26,10 +26,10 @@ groups:
           summary: "High CPU usage"
           description: "CPU usage is above 90% for more than 2 minutes."
       - alert: TooManyPlayers
-        expr: game_connected_players > 0
+        expr: game_connected_players > 10
         for: 1m
         labels:
           severity: warning
         annotations:
           summary: "High number of connected players"
-          description: "More than 20 players are connected."
+          description: "More than 10 players are connected."
