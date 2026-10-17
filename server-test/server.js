@@ -50,13 +50,20 @@ io.on('connection', (socket) => {
 
       socket.emit('match:resumed', { roomId: rejoinRoomId, spawnIndex: room.spawnIndexes[playerId] });
       socket.to(rejoinRoomId).emit('opponent:reconnected');
+
       const socketsInRoom = io.sockets.adapter.rooms.get(rejoinRoomId)?.size ?? 0;
       if (socketsInRoom < 2) {
+        console.log(`${playerId}: adversaire absent de ${rejoinRoomId}, pas de round:start`);
         socket.emit('opponent:disconnected');
       } else {
+        room.readyPlayers.clear();
+        if (roundReadyTimers.has(rejoinRoomId)) {
+          clearTimeout(roundReadyTimers.get(rejoinRoomId));
+          roundReadyTimers.delete(rejoinRoomId);
+        }
+        console.log(`round:start envoye a ${rejoinRoomId}`);
         io.to(rejoinRoomId).emit('round:start');
       }
-      if (socketsInRoom < 2) socket.emit('opponent:disconnected');
 
       console.log(`${playerId} reconnecte a ${rejoinRoomId}`);
       reconnected = true;

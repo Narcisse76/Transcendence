@@ -113,3 +113,48 @@ SecAuditLog /var/log/modsec_audit.log
 ### Where is it implemended?
 
 #### Nginx default.conf
+
+### Module (by Taqi)
+
+**Contributor:** `oettaqi`
+
+| Module | Type / points | Why | How |
+| --- | --- | --- | --- |
+| Frontend framework | Minor / 1 | Give players a menu before entering the FPS. | React and TypeScript screens styled with Tailwind CSS. |
+| Custom design system | Minor / 1 | Keep the menu consistent and reuse UI elements. | Shared buttons, inputs, language and avatar selectors, accordion and controls components. |
+| Multiple languages | Minor / 1 | Let players choose their language. | French, English and Spanish texts, a language selector and a saved profile preference. |
+| User management and authentication | Major / 2 | Let players keep their account and profile. | Express API routes, salted scrypt password hashes, HttpOnly session cookies and profile editing/deletion. |
+| Database ORM | Minor / 1 | Keep database operations simple. | Drizzle reads and updates accounts in SQLite. |
+
+These are the subject's module values, not a confirmed score. Remaining requirements: avatar upload, friends and online status for User Management; at least 10 reusable components for the design system (currently 7 shared components); translation of remaining account screens and game text for languages.
+
+# Technical Stack
+
+| Part | Technologies |
+| --- | --- |
+| Menu | React, TypeScript, Tailwind CSS and Vite |
+| FPS and real-time networking | JavaScript, Three.js and Socket.IO |
+| Accounts | Node.js 24, Express, native crypto functions, SQLite and Drizzle ORM |
+| Existing backend | NestJS and PostgreSQL; account data is stored separately in SQLite |
+| Infrastructure | Docker Compose, Nginx, ModSecurity, HashiCorp Vault, Prometheus and Grafana |
+
+React keeps menu screens organized. SQLite stores accounts without another database service, and Drizzle provides simple CRUD queries. The existing Socket.IO server verifies the session cookie before allowing a player to join the game.
+
+# Database Schema
+
+Account data uses **SQLite**, chosen for its simple single-file storage, with **Drizzle ORM** for CRUD operations.
+
+Table: `users`
+
+| Field | Type / purpose |
+| --- | --- |
+| `id` | INTEGER, primary key |
+| `email` | TEXT, required and unique |
+| `pseudo` | TEXT, required |
+| `avatar` | TEXT, avatar identifier; default: `human` |
+| `language` | TEXT, language code; default: `fr` |
+| `password_salt` | TEXT, random salt |
+| `password_hash` | TEXT, scrypt hash encoded as hexadecimal |
+
+The file `/data/users.db` persists in the Docker volume `users_data`. This account schema has one table and no table relationships. Sessions are stored in server memory, not SQLite, and are lost when the server restarts.
+
