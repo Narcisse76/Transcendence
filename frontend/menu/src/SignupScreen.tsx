@@ -18,6 +18,10 @@ export default function SignupScreen({ setUser, setSelectedScreen }: SignupScree
   async function signup(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     setErrorMessage('');
+    if (!pseudo.trim()) {
+      setErrorMessage('Le pseudo ne peut pas être vide ou contenir uniquement des espaces.');
+      return;
+    }
     if (password !== passwordConfirmation) {
       setErrorMessage('Les mots de passe sont différents');
       return;
