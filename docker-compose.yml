@@ -54,6 +54,8 @@ services:
       context: ./server-test
       dockerfile: Dockerfile
     container_name: ft_game
+    volumes:
+      - users_data:/data
     ports:
       - 3001:3001
     restart: unless-stopped
@@ -130,6 +132,7 @@ networks:
     driver: bridge
 
 volumes:
+  users_data:
   db_data:
   vault_data:
   grafana-data:

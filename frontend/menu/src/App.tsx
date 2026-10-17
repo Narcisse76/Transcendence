@@ -1,34 +1,52 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import HomeScreen from './HomeScreen';
 import CommandsScreen from './CommandsScreen';
+import LoginScreen from './LoginScreen';
+import SignupScreen from './SignupScreen';
+import ProfileScreen from './ProfileScreen';
 import type { Language } from './translations';
 
+export type User = {
+  id: string;
+  pseudo: string;
+  avatar: string;
+  language: Language;
+};
+
 export default function App() {
-  // App garde le pseudo pour pouvoir le partager avec les futurs écrans.
-  const [pseudo, setPseudo] = useState('');
-  const [selectedLanguage, setSelectedLanguage] = useState<Language>('fr');
-  const [selectedAvatar, setSelectedAvatar] = useState('human');
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
   const [selectedScreen, setSelectedScreen] = useState('home');
 
-  // Si on a choisi les commandes, on affiche cet écran à la place de l'accueil.
-  if (selectedScreen === 'commands') {
-    return (
-      <CommandsScreen
-        selectedLanguage={selectedLanguage}
-        setSelectedScreen={setSelectedScreen}
-      />
-    );
-  }
+  useEffect(() => {
+    let cancelled = false;
+    async function loadUser() {
+      try {
+        const response = await fetch('/api/account/me');
+        if (response.ok) {
+          const connectedUser: User = await response.json();
+          if (!cancelled) setUser(connectedUser);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    loadUser().catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
 
-  return (
-    <HomeScreen
-      pseudo={pseudo}
-      setPseudo={setPseudo}
-      selectedLanguage={selectedLanguage}
-      setSelectedLanguage={setSelectedLanguage}
-      selectedAvatar={selectedAvatar}
-      setSelectedAvatar={setSelectedAvatar}
-      setSelectedScreen={setSelectedScreen}
-    />
-  );
+  if (loading) return <p>Chargement...</p>;
+  if (!user && selectedScreen === 'signup') {
+    return <SignupScreen setUser={setUser} setSelectedScreen={setSelectedScreen} />;
+  }
+  if (!user) {
+    return <LoginScreen setUser={setUser} setSelectedScreen={setSelectedScreen} />;
+  }
+  if (selectedScreen === 'profile') {
+    return <ProfileScreen user={user} setUser={setUser} setSelectedScreen={setSelectedScreen} />;
+  }
+  if (selectedScreen === 'commands') {
+    return <CommandsScreen selectedLanguage={user.language} setSelectedScreen={setSelectedScreen} />;
+  }
+  return <HomeScreen user={user} setUser={setUser} setSelectedScreen={setSelectedScreen} />;
 }

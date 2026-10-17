@@ -2,6 +2,8 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import { moderateMessage } from './moderation.js';
+import { installAccountRoutes } from './routes.js';
+import { installSocketAccount } from './socket-account.js';
 
 const CHAT_MAX_LENGTH = 200;
 const CHAT_RATE_LIMIT = 5;
@@ -13,6 +15,10 @@ const io = new Server(httpServer, {
   cors: { origin: '*' }
 });
 
+app.use(express.json({ limit: '16kb' }));
+installAccountRoutes(app, io);
+installSocketAccount(io);
+
 let waitingPlayer = null;
 const rooms = new Map();
 const DISCONNECT_GRACE_PERIOD = 20000;
@@ -21,7 +27,8 @@ const ROUND_READY_TIMEOUT = 15000;
 const roundReadyTimers = new Map();
 
 io.on('connection', (socket) => {
-  const { playerId, roomId: rejoinRoomId } = socket.handshake.auth;
+  const playerId = socket.data.user.id;
+  const { roomId: rejoinRoomId } = socket.handshake.auth;
   socket.data.chatTimestamps = [];
 
   console.log(`Connexion : ${socket.id} (playerId: ${playerId})`);

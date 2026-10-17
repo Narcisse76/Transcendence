@@ -3,32 +3,36 @@ import { io } from 'socket.io-client';
 let socket = null;
 let roomId = null;
 
-// En dev : connexion directe au serveur de jeu.
-// Derriere le proxy : undefined = meme origine que la page (le proxy route /socket.io/).
-const SERVER_URL = import.meta.env.DEV ? 'http://localhost:3001' : undefined;
+let currentUser = null;
 
-// dagouill : added export based on AI-moderation branch
 export function getPlayerId() {
-  let playerId = sessionStorage.getItem('playerId');
-  if (!playerId) {
-    playerId = 'player-' + Math.random().toString(36).substring(2, 15);
-    sessionStorage.setItem('playerId', playerId);
-  }
-  return playerId;
+  return currentUser?.id ?? null;
 }
 
 export function connectToServer(callbacks) {
-  const playerId = getPlayerId();
-
   const navType = performance.getEntriesByType('navigation')[0]?.type;
   if (navType !== 'reload') sessionStorage.removeItem('currentRoomId');
-  const savedRoomId = sessionStorage.getItem('currentRoomId');
 
-  socket = io(SERVER_URL, {
+  socket = io(undefined, {
     transports: ['websocket'],
     auth: (cb) => {
-      cb({ playerId, roomId: sessionStorage.getItem('currentRoomId') || null });
+      cb({ roomId: sessionStorage.getItem('currentRoomId') || null });
     },
+  });
+
+  socket.on('account:ready', user => {
+    currentUser = user;
+  });
+
+  socket.on('connect_error', error => {
+    if (error.message === 'LOGIN_REQUIRED') window.location.href = '/';
+    if (error.message === 'ALREADY_PLAYING') {
+      window.alert('Ce compte est déjà en jeu dans un autre onglet.');
+      window.location.href = '/';
+    }
+  });
+  socket.on('disconnect', reason => {
+    if (reason === 'io server disconnect') window.location.href = '/';
   });
 
   socket.on('round:start', () => {

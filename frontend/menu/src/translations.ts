@@ -1,4 +1,3 @@
-// La langue ne peut prendre que l'une de ces trois valeurs.
 export type Language = 'fr' | 'en' | 'es';
 
 export const translations = {
