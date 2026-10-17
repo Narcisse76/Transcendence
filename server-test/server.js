@@ -2,15 +2,56 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import { moderateMessage } from './moderation.js';
+import prometheus_client from 'prom-client';
 
 const CHAT_MAX_LENGTH = 200;
 const CHAT_RATE_LIMIT = 5;
 const CHAT_RATE_WINDOW = 5000;  
 
 const app = express();
+const register = new prometheus_client.Registry();
+prometheus_client.collectDefaultMetrics({
+  register,
+});
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: { origin: '*' }
+});
+
+app.get('/metrics', async (req, res) => {
+  res.set('Content-Type', register.contentType);
+  res.end(await register.metrics());
+});
+
+const connectedPlayers = new prometheus_client.Gauge({
+  name: 'game_connected_players',
+  help: 'Number of currently connected players',
+  registers: [register],
+});
+const activeRooms = new prometheus_client.Gauge({
+  name: 'game_active_rooms',
+  help: 'Number of active game rooms',
+  registers: [register],
+});
+const waitingPlayers = new prometheus_client.Gauge({
+  name: 'game_waiting_players',
+  help: 'Number of players waiting for a match',
+  registers: [register],
+});
+const playerMoves = new prometheus_client.Counter({
+  name: 'game_player_moves_total',
+  help: 'Total number of player movement events',
+  registers: [register],
+});
+const playerShots = new prometheus_client.Counter({
+  name: 'game_player_shots_total',
+  help: 'Total number of player shots',
+  registers: [register],
+});
+const playerHits = new prometheus_client.Counter({
+  name: 'game_player_hits_total',
+  help: 'Total number of player hit events',
+  registers: [register],
 });
 
 let waitingPlayer = null;
@@ -21,6 +62,7 @@ const ROUND_READY_TIMEOUT = 15000;
 const roundReadyTimers = new Map();
 
 io.on('connection', (socket) => {
+  connectedPlayers.inc();
   const { playerId, roomId: rejoinRoomId } = socket.handshake.auth;
   socket.data.chatTimestamps = [];
 
@@ -58,6 +100,7 @@ io.on('connection', (socket) => {
         readyPlayers: new Set(),
       };
       rooms.set(roomId, room);
+	  activeRooms.set(rooms.size);
 
       waitingPlayer.socket.join(roomId);
       waitingPlayer.socket.data.playerId = waitingPlayer.playerId;
@@ -71,8 +114,10 @@ io.on('connection', (socket) => {
 
       console.log(`Match cree : ${roomId}`);
       waitingPlayer = null;
+	  waitingPlayers.set(0);
     } else {
       waitingPlayer = { playerId, socket };
+      waitingPlayers.set(1);
       socket.emit('waiting');
     }
   }
@@ -104,14 +149,17 @@ io.on('connection', (socket) => {
   });
 
   socket.on('player:move', (data) => {
+	playerMoves.inc();
     socket.to(data.roomId).emit('opponent:move', data);
   });
 
   socket.on('player:shoot', (data) => {
+	playerShots.inc();
     socket.to(data.roomId).emit('opponent:shoot', data);
   });
 
   socket.on('player:hit', (data) => {
+	playerHits.inc();
     socket.to(data.roomId).emit('hit:received', { damage: data.damage });
   });
 
@@ -153,10 +201,12 @@ io.on('connection', (socket) => {
   })
 
   socket.on('disconnect', () => {
+	connectedPlayers.dec();
     console.log(`Deconnecte : ${socket.id} (playerId: ${socket.data.playerId})`);
 
     if (waitingPlayer && waitingPlayer.socket === socket) {
       waitingPlayer = null;
+	  waitingPlayers.set(0);
       return;
     }
 
@@ -172,6 +222,7 @@ io.on('connection', (socket) => {
       const timer = setTimeout(() => {
         socket.to(roomId).emit('match:abandoned');
         rooms.delete(roomId);
+		activeRooms.set(rooms.size);
         disconnectTimers.delete(socket.data.playerId);
         console.log(`Room ${roomId} fermee (pas de reconnexion)`);
       }, DISCONNECT_GRACE_PERIOD);
