@@ -20,13 +20,22 @@ import { loadWeaponModel } from './game/weaponmodel.js';
 import { loadCharacterModel } from './game/charactermodel.js';
 import { createOpponentController } from './game/opponentcontroller.js';
 // dagouill : those two lines added from IA-moderation branch
-import { sendPosition, sendHit, sendReady, sendShoot, sendChat, getPlayerId } from './network/network.js';
+import { sendPosition, sendHit, sendReady, sendShoot, sendChat, getPlayerId, leaveMatch } from './network/network.js';
 import { setupChat } from './ui/chat.js';
 // ---
 import './style.css'
 
 // Prefixe des assets : "/" en dev, "/game/" une fois servi derriere le proxy
 const BASE = import.meta.env.BASE_URL;
+
+// Adresse du menu : port 5174 en dev, racine du site derriere le proxy
+const MENU_URL = import.meta.env.DEV ? 'http://127.0.0.1:5174/' : '/';
+
+function goToMenu() {
+  leaveMatch(() => {
+    window.location.href = MENU_URL;
+  });
+}
 
 // Setup de base
 const scene = createScene();
@@ -48,7 +57,7 @@ window.addEventListener('resize', () => {
 });
 
 // Map
-const { floor, wallBoxes, spawns } = loadMap(scene, 'arena1');
+const { floor, wallMeshes, wallBoxes, spawns } = loadMap(scene, 'arena1');
 
 // Arme premiere personne
 const WEAPON_BASE_Y = -0.4;
@@ -57,7 +66,7 @@ weaponWrapper.position.set(0.3, WEAPON_BASE_Y, -0.7);
 camera.add(weaponWrapper);
 
 const muzzlePoint = new THREE.Object3D();
-muzzlePoint.position.set(0, 0, -1);
+muzzlePoint.position.set(-0.3, 0.78, 0);
 weaponWrapper.add(muzzlePoint);
 
 const WEAPON_SCALE_FACTOR = 0.7 / 3.10;
@@ -126,8 +135,10 @@ let opponentTargetRotationY = 0;
 const opponentTargetPosition = new THREE.Vector3();
 
 // Logique de manche
-const { startRoundCountdown, resetMatch, onPlayerWinsRound, onEnemyWinsRound } = createMatchFlow({
+const { startRoundCountdown, onPlayerWinsRound, onEnemyWinsRound } = createMatchFlow({
   camera, spawns, opponentMesh,
+  opponentTargetPosition,
+  setOpponentTargetRotationY: (value) => { opponentTargetRotationY = value; },
   playerHealth, opponentHealth, ammoState,
   roundState, countdownState, countdownDisplay,
   ROUND_COUNTDOWN_DURATION,
@@ -136,6 +147,7 @@ const { startRoundCountdown, resetMatch, onPlayerWinsRound, onEnemyWinsRound } =
   startCountdown, showEndScreen, sendReady, resetHealth,
   setRoundActive: (value) => { roundActive = value; },
   getMySpawnIndex: () => mySpawnIndex,
+  goToMenu,
 });
 
 // Reseau
@@ -144,7 +156,7 @@ setupGameNetworking({
   setOpponentTargetRotationY: (value) => { opponentTargetRotationY = value; },
   setMySpawnIndex: (value) => { mySpawnIndex = value; },
   connectionBanner, applyDamage, updateHealthHUD,
-  onEnemyWinsRound, startRoundCountdown, showEndScreen, resetMatch,
+  onEnemyWinsRound, startRoundCountdown, showEndScreen, goToMenu,
   onOpponentShootAnimation: (isMoving) => opponentController.onShoot(isMoving),
   onOpponentPositionUpdate: (moveData) => opponentController.onPositionUpdate(moveData),
 // dagouill : those 5 lines added from IA-moderation branch
@@ -154,10 +166,11 @@ setupGameNetworking({
   },
   onChatBlocked: (data) => chat.addSystemMessage(`Blocked message: ${data.reason}`),
 // ---
+  isRoundActive: () => roundActive,
 });
 
 // Tir
-setupShooting(camera, scene, muzzlePoint, [opponentMesh, floor], {
+setupShooting(camera, scene, muzzlePoint, [opponentMesh, floor, ...wallMeshes], {
 // dagouill : this line changed based on IA-moderation branch
 canFire: () => roundActive && !countdownState.active && !chat.isOpen() && canFire(ammoState),
   onFire: () => {

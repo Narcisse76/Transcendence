@@ -5,7 +5,7 @@ import { moderateMessage } from './moderation.js';
 
 const CHAT_MAX_LENGTH = 200;
 const CHAT_RATE_LIMIT = 5;
-const CHAT_RATE_WINDOW = 5000;  
+const CHAT_RATE_WINDOW = 5000;
 
 const app = express();
 const httpServer = createServer(app);
@@ -43,6 +43,13 @@ io.on('connection', (socket) => {
 
       socket.emit('match:resumed', { roomId: rejoinRoomId, spawnIndex: room.spawnIndexes[playerId] });
       socket.to(rejoinRoomId).emit('opponent:reconnected');
+      const socketsInRoom = io.sockets.adapter.rooms.get(rejoinRoomId)?.size ?? 0;
+      if (socketsInRoom < 2) {
+        socket.emit('opponent:disconnected');
+      } else {
+        io.to(rejoinRoomId).emit('round:start');
+      }
+      if (socketsInRoom < 2) socket.emit('opponent:disconnected');
 
       console.log(`${playerId} reconnecte a ${rejoinRoomId}`);
       reconnected = true;
@@ -50,6 +57,10 @@ io.on('connection', (socket) => {
   }
 
   if (!reconnected) {
+    if (waitingPlayer && (!waitingPlayer.socket.connected || waitingPlayer.playerId === playerId)) {
+      waitingPlayer = null;
+    }
+
     if (waitingPlayer) {
       const roomId = `match-${waitingPlayer.playerId}-${playerId}`;
       const room = {
@@ -73,6 +84,7 @@ io.on('connection', (socket) => {
       waitingPlayer = null;
     } else {
       waitingPlayer = { playerId, socket };
+      socket.data.playerId = playerId;
       socket.emit('waiting');
     }
   }
@@ -129,9 +141,9 @@ io.on('connection', (socket) => {
       socket.emit('chat:blocked', { reason: 'too many messages' });
       return
     }
-    
+
     socket.data.chatTimestamps.push(now);
-    
+
     let verdict;
     try {
       verdict = await moderateMessage(text, {playerId: socket.data.playerId, roomId });
@@ -151,6 +163,21 @@ io.on('connection', (socket) => {
       timestamp: now
     })
   })
+
+  socket.on('match:leave', (data, ack) => {
+    const roomId = socket.data.roomId;
+    if (roomId && rooms.has(roomId)) {
+      rooms.delete(roomId);
+      if (roundReadyTimers.has(roomId)) {
+        clearTimeout(roundReadyTimers.get(roomId));
+        roundReadyTimers.delete(roomId);
+      }
+      console.log(`Room ${roomId} fermee (un joueur a quitte apres la fin du match)`);
+    }
+    // Plus de room associee : le handler 'disconnect' ne previendra personne
+    socket.data.roomId = null;
+    if (typeof ack === 'function') ack();
+  });
 
   socket.on('disconnect', () => {
     console.log(`Deconnecte : ${socket.id} (playerId: ${socket.data.playerId})`);

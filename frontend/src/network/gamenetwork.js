@@ -6,9 +6,9 @@ export function setupGameNetworking(deps) {
     opponentTargetPosition, setOpponentTargetRotationY,
     setMySpawnIndex,
     connectionBanner, applyDamage, updateHealthHUD,
-    onEnemyWinsRound, startRoundCountdown, showEndScreen, resetMatch,
+    onEnemyWinsRound, startRoundCountdown, showEndScreen, goToMenu,
     onOpponentShootAnimation, onOpponentPositionUpdate,
-    onChatMessage, onChatBlocked,
+    onChatMessage, onChatBlocked, isRoundActive,
   } = deps;
 
   return connectToServer({
@@ -33,6 +33,7 @@ export function setupGameNetworking(deps) {
       if (onOpponentShootAnimation) onOpponentShootAnimation(data.isMoving);
     },
     onOpponentHit: (hitData) => {
+      if (isRoundActive && !isRoundActive()) return;
       applyDamage(playerHealth, hitData.damage, () => {
         onEnemyWinsRound();
       });
@@ -47,7 +48,7 @@ export function setupGameNetworking(deps) {
     },
     onMatchAbandoned: () => {
       connectionBanner.classList.add('hidden');
-      showEndScreen('Adversaire non revenu - Partie terminee', resetMatch);
+      showEndScreen('Adversaire non revenu - Partie terminee', goToMenu, 'Retour au menu');
     },
     onChatMessage,
     onChatBlocked,

@@ -19,12 +19,17 @@ export function getPlayerId() {
 
 export function connectToServer(callbacks) {
   const playerId = getPlayerId();
+
+  const navType = performance.getEntriesByType('navigation')[0]?.type;
+  if (navType !== 'reload') sessionStorage.removeItem('currentRoomId');
   const savedRoomId = sessionStorage.getItem('currentRoomId');
 
-socket = io(SERVER_URL, {
-  transports: ['websocket'],
-  auth: { playerId, roomId: savedRoomId || null },
-});
+  socket = io(SERVER_URL, {
+    transports: ['websocket'],
+    auth: (cb) => {
+      cb({ playerId, roomId: sessionStorage.getItem('currentRoomId') || null });
+    },
+  });
 
   socket.on('round:start', () => {
     callbacks.onRoundStart();
@@ -67,10 +72,10 @@ socket = io(SERVER_URL, {
     callbacks.onMatchAbandoned();
   });
 
-// dagouill : added from AI-moderation branch
+  // dagouill : added from AI-moderation branch
   socket.on('chat:message', (data) => callbacks.onChatMessage(data));
   socket.on('chat:blocked', (data) => callbacks.onChatBlocked(data));
-// ---
+  // ---
 
   return socket;
 }
@@ -99,4 +104,20 @@ export function sendShoot(isMoving) {
 export function sendChat(text) {
   if (!socket || !roomId) return;
   socket.emit('chat:send', { text });
+}
+
+export function leaveMatch(onDone) {
+  sessionStorage.removeItem('currentRoomId');
+  if (!socket || !roomId) {
+    onDone();
+    return;
+  }
+  let done = false;
+  const finish = () => {
+    if (done) return;
+    done = true;
+    onDone();
+  };
+  socket.emit('match:leave', {}, finish);
+  setTimeout(finish, 500);
 }
