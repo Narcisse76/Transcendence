@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RGPD - Transcendence</title>
+</head>
+<body>
+  <main>
+    <h1>RGPD (GDPR Compliance)</h1>
+
+    <h3>1. Data Controller</h3>
+    <p>The project development team acts as the data controller for personal data collected on this platform.</p>
+
+    <h3>2. Data Collected</h3>
+    <p>We collect and process only the minimal data strictly necessary to authenticate players, run matches, maintain sessions, and ensure system reliability:</p>
+    <ul>
+      <li><strong>Authentication Data:</strong> A username, email address, and an irreversibly hashed password.</li>
+      <li><strong>Menu choices:</strong> The nickname, avatar and language you choose in the menu. They are passed to the game in the page address.</li>
+      <li><strong>Gameplay data:</strong> A random player identifier kept in your browser session, and your positions, shots and hits, shared in real time with your opponent. They are not stored after the match.</li>
+      <li><strong>Chat messages:</strong> Messages you send in the in-game chat are delivered to your opponent and checked by a moderation service before delivery (see section 5).</li>
+      <li>
+        <strong>Technical Telemetry &amp; Monitoring:</strong>
+        <ul>
+          <li>Aggregate system metrics (server resource utilization, response times, HTTP error rates).</li>
+          <li>Technical connection logs (timestamps, IP address, browser, requested pages including their parameters, and server-level response codes) used exclusively for performance diagnostics and security.</li>
+          <li>Player personal data, chat contents and individual game inputs are not exposed to or tracked through the analytical monitoring dashboards.</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h3>3. Purpose &amp; Legal Basis</h3>
+    <ul>
+      <li><strong>Account Management &amp; Authentication:</strong> Necessary for the performance of the service contract (Terms of Service).</li>
+      <li><strong>Matches and gameplay:</strong> Necessary to run the game you asked to play (performance of the service contract).</li>
+      <li><strong>Chat moderation:</strong> Legitimate interest in keeping the chat safe and preventing abuse.</li>
+      <li><strong>Security &amp; System Reliability:</strong> Legitimate interest in securing system integrity, preventing unauthorized access, and debugging platform faults.</li>
+    </ul>
+
+    <h3>4. Data Retention</h3>
+    <ul>
+      <li>Account and authentication credentials are retained for the active lifespan of the account and permanently deleted upon user account deletion or deployment tear-down.</li>
+      <li>Gameplay data lives only during the match and is not kept afterwards.</li>
+      <li>Technical server and monitoring logs are retained temporarily for diagnostic purposes and are not stored indefinitely.</li>
+    </ul>
+
+    <h3>5. Data Sharing &amp; Hosting</h3>
+    <p>No personal data is sold or rented. The platform is hosted locally within the project deployment containers and host server.</p>
+    <p>The only exception is the in-game chat: each message is sent to a third-party moderation service (the OpenAI API) to be checked before delivery. Messages judged inappropriate are blocked. This provider may process data outside the European Union. Please do not share personal information in the chat.</p>
+
+    <h3>6. Cookies and Browser Storage</h3>
+    <p>The game stores a random player identifier and the current match identifier in your browser session storage. They are needed to rejoin a match after a page reload and are erased when you close the tab. We do not use tracking or advertising cookies.</p>
+
+    <h3>7. User Rights</h3>
+    <p>In accordance with the General Data Protection Regulation (GDPR), users hold the following rights regarding their personal data:</p>
+    <ul>
+      <li><strong>Right of access, rectification, and erasure:</strong> The right to inspect and delete account data ("Right to be Forgotten").</li>
+      <li><strong>Right to data portability:</strong> The right to export personal account data in a structured, standard format.</li>
+      <li><strong>Right to restriction and objection:</strong> The right to contest data processing under specific conditions.</li>
+    </ul>
+    <p>To exercise these rights, users may delete their profile or submit a request directly through the service interface. Users also retain the right to lodge a complaint with a supervisory data protection authority (such as the CNIL in France).</p>
+
+    <p>See also our <a href="/privacy.html">Privacy Policy</a> and <a href="/terms.html">Terms of Service</a>.</p>
+  </main>
+</body>
+</html>
+EOF

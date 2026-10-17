@@ -174,7 +174,6 @@ io.on('connection', (socket) => {
       }
       console.log(`Room ${roomId} fermee (un joueur a quitte apres la fin du match)`);
     }
-    // Plus de room associee : le handler 'disconnect' ne previendra personne
     socket.data.roomId = null;
     if (typeof ack === 'function') ack();
   });

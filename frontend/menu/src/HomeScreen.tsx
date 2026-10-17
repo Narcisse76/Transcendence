@@ -86,6 +86,18 @@ export default function HomeScreen({
             onClick={() => setSelectedScreen('commands')}
           />
         </div>
+
+        <footer className="mt-6 flex justify-center gap-4 text-sm text-gray-400">
+          <a href="/privacy.html" className="underline hover:text-white">
+            Privacy Policy
+          </a>
+            <a href="/rgpd.html" className="underline hover:text-white">
+              RGPD
+            </a>
+          <a href="/terms.html" className="underline hover:text-white">
+            Terms of Service
+          </a>
+        </footer>
       </div>
     </main>
   );
