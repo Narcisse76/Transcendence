@@ -3,6 +3,6 @@ import App from './App';
 import './index.css';
 const root = document.getElementById('root');
 if (!root) {
-  throw new Error('Élément #root introuvable.');
+  throw new Error('#root element unavaible.');
 }
 createRoot(root).render(<App />);

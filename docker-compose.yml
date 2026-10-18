@@ -90,6 +90,11 @@ services:
   prometheus:
     image: docker.io/prom/prometheus:latest
     container_name: prometheus
+    restart: unless-stopped
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--web.external-url=https://localhost:8443/prometheus/"
+      - "--web.route-prefix=/prometheus/"
     ports:
       - "9090:9090"
     volumes:
@@ -105,6 +110,7 @@ services:
       context: ./monitoring/grafana
       dockerfile: Dockerfile
     container_name: grafana
+    restart: unless-stopped
     ports:
       - "3000:3000"
     depends_on:
@@ -114,16 +120,20 @@ services:
       VAULT_ADDR: "http://vault:8200"
       VAULT_TOKEN: "root"
       GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_SERVER_ROOT_URL: "https://localhost:8443/grafana/"
+      GF_SERVER_SERVE_FROM_SUB_PATH: "true"
     volumes:
-    - grafana-data:/var/lib/grafana
-    - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
-    - ./monitoring/grafana/provisioning/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/provisioning/dashboards:/var/lib/grafana/dashboards:ro
     networks:
       - transcendence
 
   node-exporter:
     image: docker.io/prom/node-exporter:latest
     container_name: node-exporter
+    ports:
+      - "19100:9100"
     networks:
       - transcendence
 

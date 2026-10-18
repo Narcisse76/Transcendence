@@ -13,7 +13,7 @@
 	"panels": [
 		{
 			"id": 1,
-			"title": "Joueurs connectés",
+			"title": "Connected players",
 			"type": "stat",
 			"datasource": {"type": "prometheus", "uid": "prometheus"},
 			"targets": [{"expr": "game_connected_players", "refId": "A"}],
@@ -21,7 +21,7 @@
 		},
 		{
 			"id": 2,
-			"title": "Parties actives",
+			"title": "Active rooms",
 			"type": "stat",
 			"datasource": {"type": "prometheus", "uid": "prometheus"},
 			"targets": [{"expr": "game_active_rooms", "refId": "A"}],
@@ -29,7 +29,7 @@
 		},
 		{
 			"id": 3,
-			"title": "Joueurs en attente",
+			"title": "Waiting players",
 			"type": "stat",
 			"datasource": {"type": "prometheus", "uid": "prometheus"},
 			"targets": [{"expr": "game_waiting_players", "refId": "A"}],
@@ -37,7 +37,7 @@
 		},
 		{
 			"id": 4,
-			"title": "Tirs par seconde",
+			"title": "Player shots",
 			"type": "timeseries",
 			"datasource": {"type": "prometheus", "uid": "prometheus"},
 			"targets": [{"expr": "rate(game_player_shots_total[5m])", "refId": "A"}],
@@ -45,7 +45,7 @@
 		},
 		{
 			"id": 5,
-			"title": "Mouvements par seconde",
+			"title": "Player moves",
 			"type": "timeseries",
 			"datasource": {"type": "prometheus", "uid": "prometheus"},
 			"targets": [{"expr": "rate(game_player_moves_total[5m])", "refId": "A"}],
@@ -53,7 +53,7 @@
 		},
 		{
 			"id": 6,
-			"title": "CPU de la VM (%)",
+			"title": "CPU utilization (%)",
 			"type": "timeseries",
 			"datasource": {"type": "prometheus", "uid": "prometheus"},
 			"targets": [{"expr": "100 - (avg by (instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)", "refId": "A"}],
@@ -61,7 +61,7 @@
 		},
 		{
 			"id": 7,
-			"title": "RAM utilisée (%)",
+			"title": "RAM utilization (%)",
 			"type": "timeseries",
 			"datasource": {"type": "prometheus", "uid": "prometheus"},
 			"targets": [{"expr": "100 * (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)", "refId": "A"}],
@@ -69,7 +69,7 @@
 		},
 		{
 			"id": 8,
-			"title": "État du serveur de jeu",
+			"title": "Game server status",
 			"type": "stat",
 			"datasource": {"type": "prometheus", "uid": "prometheus"},
 			"targets": [{"expr": "up{job=\"game-server\"}", "refId": "A"}],

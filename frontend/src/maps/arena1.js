@@ -6,7 +6,7 @@ export const arena1 = {
     { position: [0, 1.5, -9.5], size: [20, 3, 1] },
     { position: [0, 1.5, 9.5], size: [20, 3, 1] },
 
-    // Murs interieurs / couverture
+    // Inside walls / covers
     { position: [-3, 1, -2], size: [1, 2, 4] },
     { position: [3, 1, 2], size: [1, 2, 4] },
     { position: [0, 1, -5], size: [4, 2, 1] },

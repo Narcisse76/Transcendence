@@ -31,6 +31,3 @@ COPY --from=build-game /app/dist /usr/share/nginx/html/game
 EXPOSE 80 443
 
 CMD ["nginx", "-g", "daemon off;"]
-#daemon off = toujours processus principal et -g permet d'injecter cette directive a tous
-
-

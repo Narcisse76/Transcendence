@@ -25,10 +25,10 @@ import { setupChat } from './ui/chat.js';
 // ---
 import './style.css'
 
-// Prefixe des assets : "/" en dev, "/game/" une fois servi derriere le proxy
+// assets prefix : "/" en dev, "/game/" once served behind proxy
 const BASE = import.meta.env.BASE_URL;
 
-// Adresse du menu : port 5174 en dev, racine du site derriere le proxy
+// menu address : port 5174, website root behind proxy
 const MENU_URL = import.meta.env.DEV ? 'http://127.0.0.1:5174/' : '/';
 
 function goToMenu() {
@@ -37,7 +37,7 @@ function goToMenu() {
   });
 }
 
-// Setup de base
+// base setup
 const scene = createScene();
 const weaponScene = new THREE.Scene();
 const weaponLight = new THREE.DirectionalLight(0xffffff, 1);
@@ -59,7 +59,7 @@ window.addEventListener('resize', () => {
 // Map
 const { floor, wallMeshes, wallBoxes, spawns } = loadMap(scene, 'arena1');
 
-// Arme premiere personne
+// first person weapon
 const WEAPON_BASE_Y = -0.4;
 const weaponWrapper = new THREE.Group();
 weaponWrapper.position.set(0.3, WEAPON_BASE_Y, -0.7);
@@ -82,7 +82,7 @@ loadWeaponModel(camera, `${BASE}models/AssaultRifle_1.glb`, (weaponModel) => {
   weaponWrapper.scale.set(WEAPON_SCALE_FACTOR, WEAPON_SCALE_FACTOR, WEAPON_SCALE_FACTOR);
 });
 
-// Etats de jeu
+// game states
 const ammoState = createAmmoState();
 setupReloadKey(ammoState);
 const recoilState = createRecoilState(weaponWrapper.position, weaponWrapper.rotation);
@@ -92,7 +92,7 @@ const opponentHealth = createHealthState(100);
 updateHealthHUD(playerHealth);
 updateAmmoHUD(ammoState);
 
-// Adversaire
+// opponent
 const opponentMesh = new THREE.Group();
 opponentMesh.visible = false;
 scene.add(opponentMesh);
@@ -128,13 +128,13 @@ const DAMAGE_PER_HIT = 25;
 const PLAYER_MOVE_THRESHOLD = 0.01;
 const MOVE_GRACE_PERIOD = 0.25;
 
-// Etat mutable partage entre spawn, room, round et adversaire
+// mutable states shared between spawn, room, round et opponent
 let roundActive = false;
 let mySpawnIndex = 0;
 let opponentTargetRotationY = 0;
 const opponentTargetPosition = new THREE.Vector3();
 
-// Logique de manche
+// round logic
 const { startRoundCountdown, onPlayerWinsRound, onEnemyWinsRound } = createMatchFlow({
   camera, spawns, opponentMesh,
   opponentTargetPosition,
@@ -150,7 +150,7 @@ const { startRoundCountdown, onPlayerWinsRound, onEnemyWinsRound } = createMatch
   goToMenu,
 });
 
-// Reseau
+// network
 setupGameNetworking({
   playerHealth, opponentMesh, opponentTargetPosition,
   setOpponentTargetRotationY: (value) => { opponentTargetRotationY = value; },
@@ -190,7 +190,7 @@ canFire: () => roundActive && !countdownState.active && !chat.isOpen() && canFir
   },
 });
 
-// Controles
+// Controls
 const { controls, move } = setupControls(camera, renderer);
 setupSlide(movementState, move, controls, camera);
 setupSprint(movementState);
@@ -209,7 +209,7 @@ const chat = setupChat({
 });
 // ---
 
-// Boucle principale
+// main loop
 let lastPositionSent = 0;
 const POSITION_SEND_INTERVAL = 0.1;
 const OPPONENT_LERP_SPEED = 10;
