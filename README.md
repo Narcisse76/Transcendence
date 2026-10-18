@@ -72,7 +72,7 @@ AI-generated suggestions were reviewed and adapted by the team. The team remains
 |---|---|---|
 | trambure | Product Owner | Game development: FPS mechanics, Three.js rendering, movement, shooting, and game UI |
 | abignals | Technical Lead | Frameworks and AI moderation |
-| taqi | Developer | Frontend and authentication |
+| taqi | Developer | Frontend and authentification |
 | dagouill | Developer | Cybersecurity |
 | albouche | Product Manager | AI moderation and monitoring system |
 ## Features
