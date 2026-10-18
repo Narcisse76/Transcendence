@@ -1,10 +1,81 @@
-## Game: first-person 1v1 shooter (by trambure)
+# ft_transcendence - First-Person Shooter
 
-### Description
+*This project has been created as part of the 42 curriculum by trambure, abignals, taqi, dagouill, and albouche.*
+
+## Description
 
 A real-time 3D first-person shooter played 1v1 in the browser. Two players are matched automatically, spawn on opposite sides of a small arena, and fight a best-of-5 match: the first player to win 3 rounds wins. A round is won by eliminating the opponent (4 hits at 25 damage on 100 HP).
 
-### Features
+
+## Instructions
+
+### Requirements
+- Docker and Docker Compose
+- Git
+
+### Installation and Execution
+
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd transcendence
+   ```
+
+2. Configure the environment variables as described in the project's `.env` file, if provided.
+
+3. Build and start the application:
+   ```bash
+   make
+   ```
+
+4. Open the application in your browser at the address configured for the project, typically:
+   ```text
+   http://localhost:8443
+   ```
+
+### Stopping the Application
+
+Stop the running containers with:
+
+```bash
+make down
+```
+
+For project-specific commands and configuration details, refer to the `Makefile` and the relevant service configuration files.
+
+
+## Resources
+
+### Documentation and References
+
+- [Three.js Documentation](https://threejs.org/docs/) — 3D rendering and game scene management.
+- [Socket.IO Documentation](https://socket.io/docs/v4/) — Real-time communication between the client and server.
+- [MDN Web Docs — WebSockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API) — Browser-based real-time communication.
+- [Node.js Documentation](https://nodejs.org/docs/latest/api/) — Server-side JavaScript runtime.
+- [GLTF 3D Models](https://www.khronos.org/gltf/) — 3D asset format used for models and animations.
+- [Docker Documentation](https://docs.docker.com/) — Containerization and application deployment.
+
+### Use of Artificial Intelligence
+
+AI tools were used as development assistance throughout the project. They supported the team in the following tasks:
+
+- **Research and learning:** Understanding APIs, libraries, and technical concepts related to Three.js, real-time networking, and game development.
+- **Debugging:** Helping identify potential causes of errors and suggesting solutions during development.
+- **Code assistance:** Supporting the implementation and improvement of selected functions and components.
+- **Documentation:** Helping structure and write parts of the README and explain technical choices.
+
+AI-generated suggestions were reviewed and adapted by the team. The team remains responsible for the final implementation, integration, testing, and validation of the project.
+
+## Team and Roles
+
+| Team member | Role | Responsibilities |
+|---|---|---|
+| trambure | Product Owner | Game development: FPS mechanics, Three.js rendering, movement, shooting, and game UI |
+| abignals | Technical Lead | Frameworks and AI moderation |
+| taqi | Developer | Frontend and authentication |
+| dagouill | Developer | Cybersecurity |
+| albouche | Product Manager | AI moderation and monitoring system |
+## Features
 
 - 3D first-person view (Three.js) with mouse look (Pointer Lock API)
 - Movement: walk, sprint, jump, and an omnidirectional slide with a cooldown
@@ -16,7 +87,7 @@ A real-time 3D first-person shooter played 1v1 in the browser. Two players are m
 - If only one player confirms the next round, the server starts it after 15 seconds
 - In-game chat (see the chat/moderation part of this README)
 
-### Controls
+## Controls
 
 | Action | Key |
 |---|---|
@@ -27,7 +98,7 @@ A real-time 3D first-person shooter played 1v1 in the browser. Two players are m
 | Shoot | Left mouse button |
 | Reload | R |
 
-### Architecture
+## Architecture
 
 - `frontend/src/main.js`: orchestration and main loop only
 - `frontend/src/game/`: movement, physics, collisions, shooting, ammo, recoil, effects, round flow, opponent animation controller
@@ -36,7 +107,7 @@ A real-time 3D first-person shooter played 1v1 in the browser. Two players are m
 - `frontend/src/ui/`: HUD, end screen, round score
 - `server-test/server.js`: Socket.io game server (matchmaking, rooms, relay of positions/shots/hits, reconnection, ready timeout)
 
-### Technical choices
+## Technical choices
 
 - **Three.js without a physics engine**: gravity, jump and slide are hand-written, collisions use axis-aligned boxes tested per axis (so the player slides along walls). The game only needs simple movement and hitscan bullets.
 - **Socket.io forced to WebSocket transport**: the WAF blocks the `text/plain` POST requests of the polling transport (rule 920420).
@@ -133,7 +204,7 @@ Table: `users`
 
 The file `/data/users.db` persists in the Docker volume `users_data`. This account schema has one table and no table relationships. Sessions are stored in server memory, not SQLite, and are lost when the server restarts.
 
-## Module: AI moderation
+## Module: AI moderation (by albouche)
 
 ### What is AI moderation?
 AI moderation is a system that automatically checks player chat messages before they are broadcast to other players. It uses the OpenAI Moderation API to detect potentially harmful or inappropriate content.
@@ -284,7 +355,7 @@ The game server integrates moderation into the `chat:send` Socket.IO event.
 
 It validates messages, enforces rate limits, calls the moderation module, handles errors, and broadcasts only approved messages.
 
-## Module : Monitoring System (by abignals)
+## Module : Monitoring System (by albouche)
 
 ### What is Prometheus?
 Prometheus is an open-source monitoring and alerting system that collects and stores metrics as time-series data. It periodically scrapes metrics exposed by applications and exporters, allowing developers to monitor application health, resource usage, and system performance.
