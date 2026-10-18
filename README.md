@@ -4,8 +4,37 @@
 ## Description
 A real-time 3D first-person shooter played 1v1 in the browser. Two players are matched automatically, spawn on opposite sides of a small arena, and fight a best-of-5 match: the first player to win 3 rounds wins. A round is won by eliminating the opponent (4 hits at 25 damage on 100 HP).
 
+## Modules breakdown
+
+**total points** : 21
+**major modules** : 16
+**minor modules** : 5
+
+
+| Major | ID   | Feature                                                                                      | Points |
+| ----- | ---- | -------------------------------------------------------------------------------------------- | ------ |
+| ☐     | W\.1 | Use a framework for both the frontend and backend                                            | 2      |
+| ☐     | W\.4 | Implement real-time features using WebSockets or similar technology                          | 2      |
+| ☐     | U.1  | Standard user management and authentication                                                  | 2      |
+| ☐     | C.1  | Implement WAF/ModSecurity (hardened) + HashiCorp Vault for secrets                           | 2      |
+| ☐     | G.1  | Implement a complete web-based game where users can play against each other                  | 2      |
+| ☐     | G.2  | Remote players — Enable two players on separate computers to play the same game in real time | 2      |
+| ☐     | G.5  | Implement advanced 3D graphics using a library like Three.js or Babylon.js                   | 2      |
+| ☐     | D.2  | Monitoring system with Prometheus and Grafana                                                | 2      |
+
+
+
+| Minor | ID | Feature | Points |
+|:---:|:---:|---|:---:|
+| ☐ | W.7 | Use an ORM for the database | 1 |
+| ☐ | W.12 | Custom-made design system with at least 10 reusable components | 1 |
+| ☐ | A.4 | Support for additional browsers | 1 |
+| ☐ | AI.5 | Content moderation AI | 1 |
+| ☐ | DA.3 | GDPR compliance features | 1 |
+
 
 ## Instructions
+
 ### Requirements
 - Docker and Docker Compose
 - Git
