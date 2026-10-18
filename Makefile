@@ -1,4 +1,5 @@
 COMPOSE = docker compose
+GAME_CONTAINER ?= ft_game
 
 ifneq (,$(wildcard .env))
   include .env
@@ -28,6 +29,9 @@ logs:
 ps:
 	$(COMPOSE) ps
 
+users:
+	docker exec -i $(GAME_CONTAINER) node --input-type=module < server-test/show-users.js
+
 clean: down
 	$(COMPOSE) down -v
 
@@ -36,4 +40,4 @@ fclean: clean
 
 re: fclean up
 
-.PHONY: all build vault-init up down logs ps clean fclean re
+.PHONY: all build vault-init up down logs ps users clean fclean re
