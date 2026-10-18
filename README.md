@@ -1,5 +1,5 @@
 # ft_transcendence - First-Person Shooter
-*This project has been created as part of the 42 curriculum by trambure, abignals, taqi, dagouill, and albouche.*
+*This project has been created as part of the 42 curriculum by albouche, trambure, abignals, oettaqi, dagouill.*
 
 ## Description
 A real-time 3D first-person shooter played 1v1 in the browser. Two players are matched automatically, spawn on opposite sides of a small arena, and fight a best-of-5 match: the first player to win 3 rounds wins. A round is won by eliminating the opponent (4 hits at 25 damage on 100 HP).
@@ -13,24 +13,22 @@ A real-time 3D first-person shooter played 1v1 in the browser. Two players are m
 
 | Major | ID   | Feature                                                                                      | Points |
 | ----- | ---- | -------------------------------------------------------------------------------------------- | ------ |
-| ☐     | W\.1 | Use a framework for both the frontend and backend                                            | 2      |
-| ☐     | W\.4 | Implement real-time features using WebSockets or similar technology                          | 2      |
-| ☐     | U.1  | Standard user management and authentication                                                  | 2      |
-| ☐     | C.1  | Implement WAF/ModSecurity (hardened) + HashiCorp Vault for secrets                           | 2      |
-| ☐     | G.1  | Implement a complete web-based game where users can play against each other                  | 2      |
-| ☐     | G.2  | Remote players — Enable two players on separate computers to play the same game in real time | 2      |
-| ☐     | G.5  | Implement advanced 3D graphics using a library like Three.js or Babylon.js                   | 2      |
-| ☐     | D.2  | Monitoring system with Prometheus and Grafana                                                | 2      |
-
-
+| ☐     | 1 | Use a framework for both the frontend and backend                                            | 2      |
+| ☐     | 2 | Implement real-time features using WebSockets or similar technology                          | 2      |
+| ☐     | 3 | Standard user management and authentication                                                  | 2      |
+| ☐     | 4 | Implement WAF/ModSecurity (hardened) + HashiCorp Vault for secrets                           | 2      |
+| ☐     | 5 | Implement a complete web-based game where users can play against each other                  | 2      |
+| ☐     | 6 | Remote players — Enable two players on separate computers to play the same game in real time | 2      |
+| ☐     | 7 | Implement advanced 3D graphics using a library like Three.js or Babylon.js                   | 2      |
+| ☐     | 8 | Monitoring system with Prometheus and Grafana                                                | 2      |
 
 | Minor | ID | Feature | Points |
 |:---:|:---:|---|:---:|
-| ☐ | W.7 | Use an ORM for the database | 1 |
-| ☐ | W.12 | Custom-made design system with at least 10 reusable components | 1 |
-| ☐ | A.4 | Support for additional browsers | 1 |
-| ☐ | AI.5 | Content moderation AI | 1 |
-| ☐ | DA.3 | GDPR compliance features | 1 |
+| ☐ | 9 | Use an ORM for the database | 1 |
+| ☐ | 10 | Custom-made design system with at least 10 reusable components | 1 |
+| ☐ | 11 | Support for additional browsers | 1 |
+| ☐ | 12 | Content moderation AI | 1 |
+| ☐ | 13 | GDPR compliance features | 1 |
 
 
 ## Instructions
@@ -68,6 +66,22 @@ make down
 
 For project-specific commands and configuration details, refer to the `Makefile` and the relevant service configuration files.
 
+## Database structure
+Accounts are stored in SQLite, in /data/users.db. Drizzle ORM handles database queries. The Docker volume users_data preserves accounts when containers restart.
+
+Users Table
+| Column | Type | Description |
+| --- | --- | --- |
+| id | INTEGER | Unique user ID, primary key. |
+| email | TEXT | Required and unique email address. |
+| pseudo | TEXT | Required display name. Different accounts can share the same pseudo. |
+| avatar | TEXT | Avatar identifier. Default: human. |
+| language | TEXT | Preferred language: fr, en or es. Default: fr. |
+| password_salt | TEXT | Random salt generated for each account. |
+| password_hash | TEXT | Password hash generated using scrypt. Plain-text passwords are never stored. |
+
+Session Storage
+Sessions are stored in a server-side JavaScript Map, separately from SQLite. Each session ticket is associated with a user ID and an expiration date. The browser stores the ticket in an HttpOnly cookie. Server restarts clear sessions but preserve accounts.
 
 ## Resources
 ### Documentation and References
@@ -92,10 +106,51 @@ AI-generated suggestions were reviewed and adapted by the team. The team remains
 | Team member | Role | Responsibilities |
 |---|---|---|
 | trambure | Product Owner | Game development: FPS mechanics, Three.js rendering, movement, shooting, and game UI |
-| abignals | Technical Lead | Frameworks and AI moderation |
-| taqi | Developer | Frontend and authentification |
+| abignals | Technical Lead | Frameworks and Docker |
+| oettaqi | Developer | Frontend and authentification |
 | dagouill | Developer | Cybersecurity |
 | albouche | Product Manager | AI moderation and monitoring system |
+
+## Project Management
+### How Was the Team Organized?
+
+The team organized the development of the ft_transcendence project by dividing the work into modules according to each member's role, skills, and responsibilities.
+
+Each team member was responsible for specific parts of the application, including game development, frontend and backend integration, authentication, cybersecurity, AI moderation, and monitoring.
+
+The team coordinated the different modules to ensure that the frontend, backend, multiplayer game, and infrastructure could work together as a complete application.
+
+### Task Distribution
+Each member focused on their assigned responsibilities while collaborating with the rest of the team when integration or technical issues required a shared solution.
+
+### Project Management Tools
+The team used version control and development tools to organize implementation and integrate the different parts of the project.
+
+    GitHub: Used as the project repository.
+    Discord: Used as the collaboration platform.
+
+### Communication and Collaboration
+The team shared implementation updates, discussed dependencies between modules, and coordinated changes to the application architecture with weekly points.
+
+Communication channels included the team's actual messaging platform and meetings, where progress and technical problems could be discussed.
+Development Workflow
+
+### The development process followed these general steps:
+    Identify the requirements and divide the work into modules.
+    Assign responsibilities to team members.
+    Implement features within the relevant parts of the application.
+    Integrate frontend, backend, game networking, and infrastructure components.
+    Test the application and resolve integration issues.
+    Update the documentation to reflect the implemented features and known limitations.
+
+This organization helped the team develop the project in parallel while maintaining consistency across its different components.
+
+## Any challenges faced and how they were overcome
+3D Game Development: Implementing realistic player movement was challenging. Custom physics and axis-aligned bounding boxes were used to handle movement and prevent players from passing through walls.
+
+Real-Time Synchronization: Synchronizing player movements and actions was challenging. Socket.IO was used to exchange game events in real time, with interpolation to smooth opponent movements.
+
+Integration: Combining the frontend, backend, game server, and monitoring services required coordination, Docker Compose, and testing to ensure compatibility.
 
 ## Features
 - 3D first-person view (Three.js) with mouse look (Pointer Lock API)
@@ -131,6 +186,9 @@ AI-generated suggestions were reviewed and adapted by the team. The team remains
 - **Socket.io forced to WebSocket transport**: the WAF blocks the `text/plain` POST requests of the polling transport (rule 920420).
 - **Client-authoritative hits**: each client raycasts its own shots and reports hits to the server, which relays them. This is simple and responsive but not cheat-proof. See limitations.
 - **Models**: made in Blender and exported as `.glb`. TODO: credits and licenses for the character pack and the rifle model.
+
+## Database description
+
 
 ## Module: Frameworks for frontend and backend (by abignals)
 | Part | Stack | Location |
@@ -206,34 +264,6 @@ Connection feedback: Notifications about multiplayer connection status.
 Opponent movement is interpolated locally using Three.js vectors and rotations. This helps smooth the visual representation of network updates.
 
 The networking modules are responsible for communication, while the gameplay modules handle the resulting state changes.
-
-## Technical Stack (by oettaqi)
-| Part | Technologies |
-| --- | --- |
-| Menu | React, TypeScript, Tailwind CSS and Vite |
-| FPS and real-time networking | JavaScript, Three.js and Socket.IO |
-| Accounts | Node.js 24, Express, native crypto functions, SQLite and Drizzle ORM |
-| Existing backend | NestJS and PostgreSQL; account data is stored separately in SQLite |
-| Infrastructure | Docker Compose, Nginx, ModSecurity, HashiCorp Vault, Prometheus and Grafana |
-
-React keeps menu screens organized. SQLite stores accounts without another database service, and Drizzle provides simple CRUD queries. The existing Socket.IO server verifies the session cookie before allowing a player to join the game.
-
-### Database Schema
-Account data uses **SQLite**, chosen for its simple single-file storage, with **Drizzle ORM** for CRUD operations.
-
-Table: `users`
-
-| Field | Type / purpose |
-| --- | --- |
-| `id` | INTEGER, primary key |
-| `email` | TEXT, required and unique |
-| `pseudo` | TEXT, required |
-| `avatar` | TEXT, avatar identifier; default: `human` |
-| `language` | TEXT, language code; default: `fr` |
-| `password_salt` | TEXT, random salt |
-| `password_hash` | TEXT, scrypt hash encoded as hexadecimal |
-
-The file `/data/users.db` persists in the Docker volume `users_data`. This account schema has one table and no table relationships. Sessions are stored in server memory, not SQLite, and are lost when the server restarts.
 
 ## Module: AI moderation (by albouche)
 ### What is AI moderation?
@@ -720,8 +750,7 @@ Web-Based Networking: Multiplayer communication.
 GLB Models: 3D character and weapon assets.
 Vite: Development tooling and asset configuration.
 
-## Module: Custom-made design system with reusable components, including a proper color palette, typography, and icons (minimum: 10 reusable components) (by oettaqi)
-Type: Minor — 1 point
+## Module: Custom-made design system with reusable components, including a proper color palette, typography, and icons (by oettaqi)
 
 ### What Is This Module?
 This module provides reusable interface components and a consistent black-and-yellow appearance.
@@ -745,8 +774,6 @@ Remaining Requirements
 The subject requires at least 10 reusable components. The implementation currently contains 7 shared components.
 
 ## Module: Standard User Management and Authentication (by oettaqi)
-Type: Major — 2 points
-
 ### What Is This Module?
 This module lets players create an account, authenticate and manage their profile.
 
@@ -778,8 +805,6 @@ Summary
 This implementation provides authentication and profile management. Additional social and avatar features are needed for the complete module.
 
 ## Module: Database ORM (by oettaqi)
-Type: Minor — 1 point
-
 ### What Is This Module?
 This module uses an ORM to manage account data stored in SQLite.
 
