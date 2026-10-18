@@ -1,20 +1,16 @@
 # ft_transcendence - First-Person Shooter
-
-*This project has been created as part of the 42 curriculum by trambure, abignals, taqi, dagouill, and albouche*
+*This project has been created as part of the 42 curriculum by trambure, abignals, taqi, dagouill, and albouche.*
 
 ## Description
-
 A real-time 3D first-person shooter played 1v1 in the browser. Two players are matched automatically, spawn on opposite sides of a small arena, and fight a best-of-5 match: the first player to win 3 rounds wins. A round is won by eliminating the opponent (4 hits at 25 damage on 100 HP).
 
 
 ## Instructions
-
 ### Requirements
 - Docker and Docker Compose
 - Git
 
 ### Installation and Execution
-
 1. Clone the repository:
    ```bash
    git clone <repository-url>
@@ -30,7 +26,7 @@ A real-time 3D first-person shooter played 1v1 in the browser. Two players are m
 
 4. Open the application in your browser at the address configured for the project, typically:
    ```text
-   http://localhost:8443
+   https://localhost:8443
    ```
 
 ### Stopping the Application
@@ -45,9 +41,7 @@ For project-specific commands and configuration details, refer to the `Makefile`
 
 
 ## Resources
-
 ### Documentation and References
-
 - [Three.js Documentation](https://threejs.org/docs/) — 3D rendering and game scene management.
 - [Socket.IO Documentation](https://socket.io/docs/v4/) — Real-time communication between the client and server.
 - [MDN Web Docs — WebSockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API) — Browser-based real-time communication.
@@ -56,7 +50,6 @@ For project-specific commands and configuration details, refer to the `Makefile`
 - [Docker Documentation](https://docs.docker.com/) — Containerization and application deployment.
 
 ### Use of Artificial Intelligence
-
 AI tools were used as development assistance throughout the project. They supported the team in the following tasks:
 
 - **Research and learning:** Understanding APIs, libraries, and technical concepts related to Three.js, real-time networking, and game development.
@@ -67,7 +60,6 @@ AI tools were used as development assistance throughout the project. They suppor
 AI-generated suggestions were reviewed and adapted by the team. The team remains responsible for the final implementation, integration, testing, and validation of the project.
 
 ## Team and Roles
-
 | Team member | Role | Responsibilities |
 |---|---|---|
 | trambure | Product Owner | Game development: FPS mechanics, Three.js rendering, movement, shooting, and game UI |
@@ -75,8 +67,8 @@ AI-generated suggestions were reviewed and adapted by the team. The team remains
 | taqi | Developer | Frontend and authentification |
 | dagouill | Developer | Cybersecurity |
 | albouche | Product Manager | AI moderation and monitoring system |
-## Features
 
+## Features
 - 3D first-person view (Three.js) with mouse look (Pointer Lock API)
 - Movement: walk, sprint, jump, and an omnidirectional slide with a cooldown
 - Hitscan shooting with a 12-round magazine, fire rate limit, reload timer, recoil, tracers and impact markers
@@ -88,7 +80,6 @@ AI-generated suggestions were reviewed and adapted by the team. The team remains
 - In-game chat (see the chat/moderation part of this README)
 
 ## Controls
-
 | Action | Key |
 |---|---|
 | Move | W/A/S/D (physical keys, so Z/Q/S/D on AZERTY) |
@@ -99,7 +90,6 @@ AI-generated suggestions were reviewed and adapted by the team. The team remains
 | Reload | R |
 
 ## Architecture
-
 - `frontend/src/main.js`: orchestration and main loop only
 - `frontend/src/game/`: movement, physics, collisions, shooting, ammo, recoil, effects, round flow, opponent animation controller
 - `frontend/src/network/`: Socket.io client (`network.js`) and the glue between network events and game logic (`gamenetwork.js`)
@@ -108,14 +98,12 @@ AI-generated suggestions were reviewed and adapted by the team. The team remains
 - `server-test/server.js`: Socket.io game server (matchmaking, rooms, relay of positions/shots/hits, reconnection, ready timeout)
 
 ## Technical choices
-
 - **Three.js without a physics engine**: gravity, jump and slide are hand-written, collisions use axis-aligned boxes tested per axis (so the player slides along walls). The game only needs simple movement and hitscan bullets.
 - **Socket.io forced to WebSocket transport**: the WAF blocks the `text/plain` POST requests of the polling transport (rule 920420).
 - **Client-authoritative hits**: each client raycasts its own shots and reports hits to the server, which relays them. This is simple and responsive but not cheat-proof. See limitations.
 - **Models**: made in Blender and exported as `.glb`. TODO: credits and licenses for the character pack and the rifle model.
 
 ## Module: Frameworks for frontend and backend (by abignals)
-
 | Part | Stack | Location |
 |------|-------|----------|
 | Menu / UI | **React 19** + TypeScript, Tailwind CSS, Vite | `frontend/menu/` |
@@ -126,8 +114,7 @@ AI-generated suggestions were reviewed and adapted by the team. The team remains
 - **React** handles the menu screens (login, signup, profile, controls) as reusable components.
 - **NestJS** exposes the REST API under the `/api` prefix (e.g. `GET /api/health`), organised in modules and controllers.
 
-## Module: Real-time features (WebSockets)
-
+## Module: Implement real-time features using WebSockets or similar technology (by trambure)
 Real-time communication uses **Socket.io** over WebSocket (`transports: ['websocket']`).
 
 - **Server:** `server-test/server.js` — **Client:** `frontend/src/network/network.js`
@@ -145,7 +132,6 @@ Real-time communication uses **Socket.io** over WebSocket (`transports: ['websoc
 - Leaving a match (`match:leave`) and disconnects are cleaned up server-side.
 
 ## Module: Hardened WAF / ModSecurity (by dagouill)
-
 ### What is ModSecurity?
 ModSecurity is an open-source Web Application Firewall (WAF) engine that intercepts HTTP/HTTPS requests before they hit your backend application. It operates at Layer 7 (Application Layer).
 
@@ -160,22 +146,39 @@ The OWASP CRS is a collection of generic attack detection rules designed to catc
 3. **Information Leak Prevention:** Filters response headers to prevent leaking web server signatures (`Server`, `X-Powered-By`).
 4. **WebSocket & Long-Polling Protection:** Configured specifically to permit real-time Pong gameplay and chat connections without dropping the connection upgrade.
 
+## Module: 3D Real-Time Multiplayer FPS Game (by trambure)
+### What Is the Game?
+This module implements a complete browser-based, 3D first-person shooter (FPS) game using Three.js for rendering and JavaScript ES modules for game logic.
 
-## Module : frontend (by Taqi)
+Players can join a multiplayer match, move around a 3D arena, shoot their opponent, manage ammunition and health, and compete in a round-based match. The game also includes real-time player synchronization and an in-game chat system.
 
+The game is designed to run directly in a web browser without requiring a separate game client installation.
 
-| Module | Type / points | Why | How |
-| --- | --- | --- | --- |
-| Frontend framework | Minor / 1 | Give players a menu before entering the FPS. | React and TypeScript screens styled with Tailwind CSS. |
-| Custom design system | Minor / 1 | Keep the menu consistent and reuse UI elements. | Shared buttons, inputs, language and avatar selectors, accordion and controls components. |
-| Multiple languages | Minor / 1 | Let players choose their language. | French, English and Spanish texts, a language selector and a saved profile preference. |
-| User management and authentication | Major / 2 | Let players keep their account and profile. | Express API routes, salted scrypt password hashes, HttpOnly session cookies and profile editing/deletion. |
-| Database ORM | Minor / 1 | Keep database operations simple. | Drizzle reads and updates accounts in SQLite. |
+### Core Features
+Real-Time Multiplayer (G.1.1 & G.1.2): Players can compete against each other in live matches. Player positions, rotations, shooting actions, hits, and chat messages are synchronized through the networking layer.
+3D Game Environment (G.1.4): The game uses Three.js to render a 3D arena, walls, player characters, and a first-person weapon model. The camera acts as the player's viewpoint, providing an immersive FPS experience.
+Clear Rules and Win/Loss Conditions (G.1.3): Each player starts with 100 health points. A successful hit deals 25 damage. A player who loses all their health loses the round, while the opponent wins it. The match flow manages round transitions, countdowns, score tracking, and the end screen.
+Player Controls and Movement: The game supports first-person camera controls, movement, sprinting, sliding, and jumping. Collision detection prevents the player from moving through arena walls.
+Weapon and Ammunition System: The shooting module handles firing and hit detection, while the ammunition module manages available ammunition and reloading. Weapon recoil and movement animations improve the gameplay experience.
+Health and Game HUD: The user interface displays player health, ammunition, round information, and countdown timers. A connection banner provides feedback about the multiplayer connection state.
+In-Game Chat: Players can exchange messages during a match. Opening the chat disables movement input, and shooting is prevented while the chat is open. The networking integration also supports notifications when messages are blocked.
 
-These are the subject's module values, not a confirmed score. Remaining requirements: avatar upload, friends and online status for User Management; at least 10 reusable components for the design system (currently 7 shared components); translation of remaining account screens and game text for languages.
+### Multiplayer Synchronization
+The networking layer provides the communication between players during a live match.
 
-### Technical Stack
+The game sends or handles the following information:
 
+Player movement: Position, camera rotation, and sliding state.
+Combat events: Shooting actions and hit notifications.
+Match state: Player readiness and round-related events.
+Chat: Messages exchanged between players.
+Connection feedback: Notifications about multiplayer connection status.
+
+Opponent movement is interpolated locally using Three.js vectors and rotations. This helps smooth the visual representation of network updates.
+
+The networking modules are responsible for communication, while the gameplay modules handle the resulting state changes.
+
+## Technical Stack (by oettaqi)
 | Part | Technologies |
 | --- | --- |
 | Menu | React, TypeScript, Tailwind CSS and Vite |
@@ -187,7 +190,6 @@ These are the subject's module values, not a confirmed score. Remaining requirem
 React keeps menu screens organized. SQLite stores accounts without another database service, and Drizzle provides simple CRUD queries. The existing Socket.IO server verifies the session cookie before allowing a player to join the game.
 
 ### Database Schema
-
 Account data uses **SQLite**, chosen for its simple single-file storage, with **Drizzle ORM** for CRUD operations.
 
 Table: `users`
@@ -205,7 +207,6 @@ Table: `users`
 The file `/data/users.db` persists in the Docker volume `users_data`. This account schema has one table and no table relationships. Sessions are stored in server memory, not SQLite, and are lost when the server restarts.
 
 ## Module: AI moderation (by albouche)
-
 ### What is AI moderation?
 AI moderation is a system that automatically checks player chat messages before they are broadcast to other players. It uses the OpenAI Moderation API to detect potentially harmful or inappropriate content.
 
@@ -356,7 +357,6 @@ The game server integrates moderation into the `chat:send` Socket.IO event.
 It validates messages, enforces rate limits, calls the moderation module, handles errors, and broadcasts only approved messages.
 
 ## Module : Monitoring System (by albouche)
-
 ### What is Prometheus?
 Prometheus is an open-source monitoring and alerting system that collects and stores metrics as time-series data. It periodically scrapes metrics exposed by applications and exporters, allowing developers to monitor application health, resource usage, and system performance.
 
@@ -514,3 +514,259 @@ Grafana connects to Prometheus as a data source and displays the collected metri
 
 Provisioning files can be stored here to automate data-source and dashboard configuration.
 
+## Module: Support for additional browsers (by trambure)
+### What Is Cross-Browser Compatibility?
+Cross-browser compatibility ensures that the web application works correctly across different web browsers. The goal is to provide a consistent user experience regardless of the browser used to access the application.
+
+This module focuses on supporting additional browsers, testing game features, documenting browser-specific limitations, and maintaining consistent UI/UX.
+What Makes It Important?
+
+    Multiple Browser Support (A.4.1): The application should support at least two additional browsers, such as Firefox, Safari, or Microsoft Edge, alongside the primary development browser.
+    Feature Compatibility (A.4.2): All major features must be tested in each supported browser, including game rendering, player controls, multiplayer networking, shooting, and chat.
+    Browser Limitations (A.4.3): Any browser-specific issues or unsupported features must be documented, together with possible workarounds.
+    Consistent UI/UX (A.4.4): The game interface, HUD, chat, countdowns, controls, and end screen should behave consistently across all supported browsers.
+
+### How is compatibility tested?
+The application uses JavaScript ES modules, Three.js, CSS, and browser-based networking. These technologies must be verified across supported browsers.
+
+    Rendering: Verify that the 3D arena, weapon models, lighting, and opponent animations display correctly.
+    Controls: Test movement, jumping, sprinting, sliding, and shooting.
+    Networking: Verify live player synchronization, hit notifications, and chat messages.
+    User Interface: Check health, ammunition, round information, countdowns, and end screens.
+    Responsive Layout: Ensure that the interface adapts correctly to different window sizes.
+    Error Detection: Use browser developer tools to identify JavaScript errors, rendering problems, and network failures.
+
+### Supported browsers
+The following browsers are recommended for compatibility testing:
+
+    Google Chrome: Primary reference browser for development and testing.
+    Mozilla Firefox: Verify rendering, controls, networking, and interface behavior.
+    Microsoft Edge: Check gameplay and UI consistency using its Chromium-based engine.
+    Safari: Test WebGL support, input handling, and browser-specific behavior where available.
+
+Actual compatibility must be confirmed through testing in each browser.
+
+## Module: Remote Multiplayer Gameplay (by trambure)
+### What Is Remote Multiplayer?
+Remote multiplayer allows two players using separate computers to participate in the same game in real time. The game uses a networking layer to exchange player positions, shooting actions, hit notifications, and chat messages.
+
+The objective is to provide responsive gameplay, handle network interruptions gracefully, and allow players to reconnect when a connection is lost.
+
+### What Makes It Reliable?
+    Latency and Disconnection Handling: The networking layer must handle delayed messages and unexpected disconnections without immediately breaking the entire game. Connection status feedback helps players understand when communication is interrupted.
+    Smooth Remote Gameplay: Player positions and rotations are updated over the network. Local interpolation smooths opponent movement between received updates, reducing visible jumps and discontinuities.
+    Reconnection Logic: The networking system should detect connection loss, attempt to restore communication, and synchronize the player's state when the connection is re-established.
+
+### How Was the Code Implemented?
+The game follows a modular architecture that separates gameplay mechanics from network communication.
+
+    Networking (network/network.js): Provides functions for sending player positions, shooting actions, hit notifications, readiness signals, and chat messages.
+    Game Networking (network/gamenetwork.js): Integrates network events with the game state and opponent behavior.
+    Position Synchronization: Sends player position, rotation, and sliding state approximately every 100 milliseconds.
+    Opponent Interpolation (game/opponentcontroller.js): Smoothly updates the opponent's position and rotation to improve the visual experience.
+    Connection Feedback: A connection banner informs players about the multiplayer connection state.
+    Match Flow (game/matchflow.js): Coordinates round transitions and match state when players become ready or a round ends.
+
+### Reconnection Strategy
+To support reliable remote gameplay, the networking layer should implement the following reconnection process:
+
+    Detect when the connection is lost.
+    Display a connection warning to the player.
+    Attempt to reconnect using a controlled retry strategy.
+    Rejoin the appropriate match or game session when possible.
+    Synchronize player positions, health, ammunition, and round state.
+    Resume gameplay only when the match state is consistent.
+
+The server should remain responsible for validating the restored session and authoritative game state.
+
+## Module: 3D Real-Time Game (by trambure)
+### What Is the Game?
+This module implements a browser-based, 3D first-person shooter (FPS) using Three.js for rendering and JavaScript ES modules for game logic.
+
+Players can join a multiplayer match, move around a 3D arena, shoot their opponent, manage health and ammunition, and compete in round-based gameplay. The game also includes real-time player synchronization and an in-game chat system.
+
+### Core Features
+    Real-Time Multiplayer (G.1.1): The game allows players to compete against each other through a multiplayer networking system that exchanges movement, shooting, hit, and chat events.
+    Live Matches (G.1.2): Players can participate in live matches, with player positions and rotations updated over the network during gameplay.
+    Clear Rules and Win/Loss Conditions (G.1.3):### Each player starts with 100 health points. Each successful hit deals 25 damage. When a player's health reaches zero, the opponent wins the round.
+    3D Game Environment (G.1.4): Three.js renders the arena, walls, opponent character, lighting, and first-person weapon model, creating an immersive 3D experience.
+
+### How Was the Code Implemented?
+Module: 3D Real-Time Multiplayer FPS Game (by trambure)
+What Is the Game?
+
+This module implements a browser-based, 3D first-person shooter (FPS) using Three.js for rendering and JavaScript ES modules for game logic.
+
+Players can join a multiplayer match, move around a 3D arena, shoot their opponent, manage health and ammunition, and compete in round-based gameplay. The game also includes real-time player synchronization and an in-game chat system.
+Core Features
+
+    Real-Time Multiplayer (G.1.1): The game allows players to compete against each other through a multiplayer networking system that exchanges movement, shooting, hit, and chat events.
+    Live Matches (G.1.2): Players can participate in live matches, with player positions and rotations updated over the network during gameplay.
+    Clear Rules and Win/Loss Conditions (G.1.3): Each player starts with 100 health points. Each successful hit deals 25 damage. When a player's health reaches zero, the opponent wins the round.
+    3D Game Environment (G.1.4): Three.js renders the arena, walls, opponent character, lighting, and first-person weapon model, creating an immersive 3D experience.
+
+### How Was the Code Implemented?
+The game follows a modular architecture, separating rendering, gameplay mechanics, networking, and user interface logic.
+
+    Scene and Rendering (scene.js): Initializes the Three.js scene, camera, and renderer.
+    Map System (maps/index.js): Loads the arena, floor, walls, collision data, and spawn points.
+    Player Controls (game/controls.js): Handles player input and camera controls.
+    Movement and Physics (game/movement.js, game/physics.js): Implements movement, sprinting, sliding, jumping, and gravity.
+    Combat (game/shooting.js, game/health.js, game/ammo.js): Manages shooting, hit detection, damage, health, ammunition, and reloading.
+    Opponent Management (game/opponentcontroller.js): Updates opponent movement, rotation, and animations.
+    Match Flow (game/matchflow.js, ui/rounds.js): Manages round countdowns, scores, victories, and match progression.
+    Networking (network/network.js, network/gamenetwork.js): Handles multiplayer events, position updates, shooting, hits, and chat messages.
+    User Interface (ui/hud.js, ui/chat.js, ui/endscreen.js): Displays health, ammunition, round information, chat, and end-of-match screens.
+
+### Game Rules and Match Flow
+    Each player starts with 100 health points.
+    Each successful hit inflicts 25 damage.
+    Players move around the arena and shoot their opponent.
+    When a player's health reaches zero, the opponent wins the round.
+    A countdown precedes the start of a round.
+    The match system updates scores and manages round transitions.
+
+### Multiplayer Synchronization
+The game sends player position, rotation, and sliding state approximately every 100 milliseconds.
+
+Opponent movement is interpolated locally to reduce visible jumps between network updates. Shooting actions, hit notifications, readiness signals, and chat messages are handled by the networking layer.
+Technologies Used
+
+    JavaScript (ES Modules): Game logic and modular architecture.
+    Three.js: 3D rendering, cameras, lighting, and models.
+    HTML/CSS: User interface and HUD.
+    Web-Based Networking: Communication between players during live matches.
+    GLB Models: 3D weapon and character assets.
+    Vite: Development server and asset configuration.
+
+### Game Rules and Match Flow
+    Each player starts with 100 health points.
+    Each successful hit inflicts 25 damage.
+    Players move around the arena and shoot their opponent.
+    When a player's health reaches zero, the opponent wins the round.
+    A countdown precedes the start of a round.
+    The match system updates scores and manages round transitions.
+
+## Module: Implement a complete web-based game where users can play against each other (by trambure)
+### What Is the Game?
+This module implements a complete browser-based, 3D first-person shooter (FPS) using Three.js and JavaScript ES modules.
+
+Players can compete against each other in a 3D arena, move around the map, shoot opponents, manage health and ammunition, and participate in round-based matches. The game also includes real-time networking and an in-game chat system.
+
+### Core Features
+Multiplayer Gameplay: Players can compete against another player through the game's networking layer.
+Live Matches: Player positions, rotations, shooting actions, and hit notifications are exchanged during gameplay.
+3D Environment: Three.js renders the arena, walls, character models, lighting, and first-person weapon.
+Combat System: Players can shoot opponents, inflict damage, and manage ammunition.
+Health Management: Each player starts with 100 health points, and each successful hit deals 25 damage.
+Win/Loss Conditions: A player whose health reaches zero loses the round, and the opponent wins.
+Round Management: Countdown timers, score tracking, round transitions, and end-of-match screens organize the gameplay.
+Player Controls: Movement, sprinting, sliding, jumping, and collision detection provide interactive gameplay.
+In-Game Chat: Players can exchange messages during a match.
+
+### How Was the Code Implemented?
+The game uses a modular architecture that separates gameplay, rendering, networking, and interface components.
+
+Rendering (scene.js): Initializes the Three.js scene, camera, and renderer.
+Maps (maps/index.js): Loads the arena, walls, floor, and spawn points.
+Controls (game/controls.js): Handles player input and camera movement.
+Physics (game/physics.js, game/movement.js): Implements movement, gravity, jumping, sprinting, and sliding.
+Combat (game/shooting.js, game/health.js, game/ammo.js): Handles shooting, damage, health, ammunition, and reloading.
+Networking (network/network.js, network/gamenetwork.js): Exchanges gameplay events and player state between connected players.
+Match Flow (game/matchflow.js, ui/rounds.js): Manages countdowns, victories, scores, and round progression.
+User Interface (ui/hud.js, ui/chat.js, ui/endscreen.js): Displays health, ammunition, chat, and match results.
+
+### Game Rules
+Each player starts with 100 health points.
+Each successful hit deals 25 damage.
+Players must shoot their opponent to reduce their health.
+A player whose health reaches zero loses the round.
+A countdown precedes each round.
+The match system updates scores and manages round transitions.
+Technologies Used
+JavaScript (ES Modules): Game logic and modular architecture.
+Three.js: 3D rendering and scene management.
+HTML/CSS: Interface and HUD.
+Web-Based Networking: Multiplayer communication.
+GLB Models: 3D character and weapon assets.
+Vite: Development tooling and asset configuration.
+
+## Module: Custom-made design system with reusable components, including a proper color palette, typography, and icons (minimum: 10 reusable components) (by oettaqi)
+Type: Minor — 1 point
+
+### What Is This Module?
+This module provides reusable interface components and a consistent black-and-yellow appearance.
+
+### Core Features
+Shared buttons and text inputs.
+Language selection.
+Avatar selection.
+Expandable rules and keyboard controls components.
+
+### How Was the Code Implemented?
+Reusable React components receive props describing their content and behavior. Tailwind CSS classes define their appearance.
+
+The same components are reused across screens to avoid duplicating interface code.
+
+### Technologies Used
+React, TypeScript and Tailwind CSS.
+
+Remaining Requirements
+
+The subject requires at least 10 reusable components. The implementation currently contains 7 shared components.
+
+## Module: Standard User Management and Authentication (by oettaqi)
+Type: Major — 2 points
+
+### What Is This Module?
+This module lets players create an account, authenticate and manage their profile.
+
+### Core Features
+Email and password registration and login.
+Password hashing with a unique salt.
+Authentication through HttpOnly session cookies.
+Profile editing, logout and account deletion.
+Account verification before connecting to the game.
+
+### How Was the Code Implemented?
+Express routes receive requests from the React interface and validate their inputs.
+
+Passwords are processed with scrypt. SQLite stores the salt and password hash, never the original password.
+
+After authentication, the server generates a random session ticket. A server-side Map associates this ticket with the account, while a cookie stores the ticket in the browser.
+
+Socket.IO middleware verifies the session before allowing access to the game.
+
+### Technologies Used
+Express, Node.js crypto, Socket.IO, SQLite and React.
+
+Remaining Requirements
+
+Avatar upload, friends and online status are still required to complete the major module.
+
+Summary
+
+This implementation provides authentication and profile management. Additional social and avatar features are needed for the complete module.
+
+## Module: Database ORM (by oettaqi)
+Type: Minor — 1 point
+
+### What Is This Module?
+This module uses an ORM to manage account data stored in SQLite.
+
+### Core Features
+Account creation and lookup.
+Profile updates.
+Account deletion.
+Persistent storage through a Docker volume.
+
+### How Was the Code Implemented?
+Drizzle ORM defines the users table and performs account queries through reusable functions.
+
+The table stores the account ID, email, pseudo, avatar identifier, language, password salt and password hash.
+
+Drizzle uses Node.js DatabaseSync to access the SQLite database.
+
+### Technologies Used
+
+Drizzle ORM, SQLite, Node.js and Docker.
