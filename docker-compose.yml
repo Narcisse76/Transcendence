@@ -97,8 +97,6 @@ services:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--web.external-url=https://localhost:8443/prometheus/"
       - "--web.route-prefix=/prometheus/"
-    ports:
-      - "9090:9090"
     volumes:
       - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - ./monitoring/prometheus/rules:/etc/prometheus/rules:ro
@@ -113,8 +111,6 @@ services:
       dockerfile: Dockerfile
     container_name: grafana
     restart: unless-stopped
-    ports:
-      - "3000:3000"
     depends_on:
       - prometheus
       - vault

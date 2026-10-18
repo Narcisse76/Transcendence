@@ -1,6 +1,6 @@
 # ft_transcendence - First-Person Shooter
 
-*This project has been created as part of the 42 curriculum by trambure, abignals, taqi, dagouill, and albouche.*
+*This project has been created as part of the 42 curriculum by trambure, abignals, taqi, dagouill, and albouche*
 
 ## Description
 
