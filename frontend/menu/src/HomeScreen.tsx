@@ -18,13 +18,13 @@ export default function HomeScreen({ user, setUser, setSelectedScreen }: HomeScr
     try {
       const response = await fetch('/api/account/logout', { method: 'POST' });
       if (!response.ok) {
-        setErrorMessage('Déconnexion refusée');
+        setErrorMessage(languageText.logoutFailed);
         return;
       }
       setUser(null);
       setSelectedScreen('home');
     } catch {
-      setErrorMessage('Serveur inaccessible');
+      setErrorMessage(languageText.serverUnavailable);
     }
   }
 
@@ -40,20 +40,20 @@ export default function HomeScreen({ user, setUser, setSelectedScreen }: HomeScr
           <Button text={languageText.playButton} onClick={() => { window.location.href = '/game/'; }} />
 
           <Button text={languageText.commandsTitle} onClick={() => setSelectedScreen('commands')} />
-          <Button text="Mon profil" onClick={() => setSelectedScreen('profile')} />
-          <Button text="Déconnexion" onClick={logout} />
+          <Button text={languageText.profileButton} onClick={() => setSelectedScreen('profile')} />
+          <Button text={languageText.logoutButton} onClick={logout} />
         </div>
         <p>{errorMessage}</p>
 
         <footer className="mt-6 flex flex-wrap justify-center gap-4 text-sm text-gray-400">
           <a href="/privacy.html" className="underline hover:text-white">
-            Privacy Policy
+            {languageText.privacyLink}
           </a>
           <a href="/rgpd.html" className="underline hover:text-white">
-            RGPD
+            {languageText.dataProtectionLink}
           </a>
           <a href="/terms.html" className="underline hover:text-white">
-            Terms of Service
+            {languageText.termsLink}
           </a>
         </footer>
       </div>

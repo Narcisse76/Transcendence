@@ -4,11 +4,11 @@ import { newSalt, hashPassword, passwordMatches, publicProfile,
 
 export function installAccountRoutes(app, io) {
   app.post('/api/account/register', async (req, res) => {
-    const { email, pseudo, password } = req.body ?? {};
+    const { email, pseudo, password, language = 'fr' } = req.body ?? {};
     if (typeof email !== 'string' || typeof pseudo !== 'string' ||
         typeof password !== 'string' || password.length < 5 ||
         password.length > 128 || pseudo.trim().length < 1 ||
-        pseudo.length > 24 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        pseudo.length > 24 || !['fr', 'en', 'es'].includes(language) || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return res.status(400).json({ error: 'INVALID_FIELDS' });
     }
     const normalizedEmail = email.trim().toLowerCase();
@@ -19,7 +19,7 @@ export function installAccountRoutes(app, io) {
     const hash = await hashPassword(password, salt);
     let user;
     try {
-      user = insertUser(normalizedEmail, pseudo.trim(), salt, hash);
+      user = insertUser(normalizedEmail, pseudo.trim(), salt, hash, language);
     } catch (error) {
       if (error.errstr === 'constraint failed') {
         return res.status(409).json({ error: 'EMAIL_USED' });

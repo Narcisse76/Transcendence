@@ -32,11 +32,12 @@ export function findUserById(id) {
   return db.select().from(users).where(eq(users.id, id)).get();
 }
 
-export function insertUser(email, pseudo, salt, hash) {
+export function insertUser(email, pseudo, salt, hash, language = 'fr') {
   try {
     return db.insert(users).values({
       email,
       pseudo,
+      language,
       password_salt: salt,
       password_hash: hash,
     }).returning().get();

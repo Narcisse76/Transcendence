@@ -5,6 +5,7 @@ import LoginScreen from './LoginScreen';
 import SignupScreen from './SignupScreen';
 import ProfileScreen from './ProfileScreen';
 import type { Language } from './translations';
+import { translations } from './translations';
 
 export type User = {
   id: string;
@@ -17,6 +18,7 @@ export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedScreen, setSelectedScreen] = useState('home');
+  const [selectedLanguage, setSelectedLanguage] = useState<Language>('fr');
 
   useEffect(() => {
     async function loadUser() {
@@ -33,12 +35,14 @@ export default function App() {
     loadUser().catch(() => {});
   }, []);
 
-  if (loading) return <p>Chargement...</p>;
+  if (loading) return <p lang={selectedLanguage}>{translations[selectedLanguage].loading}</p>;
   if (!user && selectedScreen === 'signup') {
-    return <SignupScreen setUser={setUser} setSelectedScreen={setSelectedScreen} />;
+    return <SignupScreen setUser={setUser} setSelectedScreen={setSelectedScreen}
+      selectedLanguage={selectedLanguage} setSelectedLanguage={setSelectedLanguage} />;
   }
   if (!user) {
-    return <LoginScreen setUser={setUser} setSelectedScreen={setSelectedScreen} />;
+    return <LoginScreen setUser={setUser} setSelectedScreen={setSelectedScreen}
+      selectedLanguage={selectedLanguage} setSelectedLanguage={setSelectedLanguage} />;
   }
   if (selectedScreen === 'profile') {
     return <ProfileScreen user={user} setUser={setUser} setSelectedScreen={setSelectedScreen} />;
