@@ -1,6 +1,7 @@
 import { findUserByEmail, findUserById, insertUser, updateProfile, deleteUser } from './database.js';
 import { newSalt, hashPassword, passwordMatches, publicProfile,
   startConnection, readConnection, endConnection, endUserConnections, clearConnectionCookie } from './auth.js';
+import { sendAccountDeletedEmail } from './emails.js';
 
 export function installAccountRoutes(app, io) {
   app.post('/api/account/register', async (req, res) => {
@@ -65,12 +66,23 @@ export function installAccountRoutes(app, io) {
     res.json(publicProfile(user));
   });
 
-  app.delete('/api/account/me', (req, res) => {
+  app.delete('/api/account/me', async (req, res) => {
     const connection = readConnection(req.headers.cookie);
     if (!connection) return res.status(401).json({ error: 'LOGIN_REQUIRED' });
-    deleteUser(connection.userId);
-    endUserConnections(connection.userId, io);
+
+    const user = findUserById(connection.userId);
+    if (!user) return res.status(401).json({ error: 'LOGIN_REQUIRED' });
+
+    deleteUser(user.id);
+    endUserConnections(user.id, io);
     clearConnectionCookie(res);
+
+    try {
+      await sendAccountDeletedEmail(user.email);
+    } catch {
+      console.error("Compte supprimé, mais le mail n'a pas pu être envoyé.");
+    }
+
     res.sendStatus(204);
   });
 
